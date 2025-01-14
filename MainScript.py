@@ -41,3 +41,5 @@ class Controller:
 
 with Controller() as game:
     game.run()
+
+print("ГОЙДА!!!")
