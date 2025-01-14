@@ -38,7 +38,6 @@ class Controller:
 
             pygame.display.flip()
 
-
 with Controller() as game:
     game.run()
 

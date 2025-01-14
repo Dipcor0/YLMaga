@@ -7,7 +7,7 @@ SIZE_SCREEN = 1920, 1000
 COLOR_SCREEN = pygame.Color('pink')
 
 # OTHER
-active_scene = 0
+active_scene = 1
 
 # INFO ABOUT CREATURES
 # PLAYER
