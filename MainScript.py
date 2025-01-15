@@ -1,14 +1,17 @@
 import pygame
+
+import Constants
 from Equipment import *
 from Scenes import Shop, Battle
 from Creatures import Hero
-from Constants import SIZE_SCREEN, active_scene
+from Constants import SIZE_SCREEN, active_scene, load_sprites
 
 
 class Controller:
     def __enter__(self):
         pygame.init()
         self.screen = pygame.display.set_mode(SIZE_SCREEN)
+        load_sprites()
 
         hero = Hero()
         self.scenes = {0: Shop(hero),
@@ -38,7 +41,6 @@ class Controller:
 
             pygame.display.flip()
 
+
 with Controller() as game:
     game.run()
-
-print("ГОЙДА!!!")

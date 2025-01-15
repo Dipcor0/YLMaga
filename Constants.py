@@ -1,4 +1,6 @@
 import pygame
+import os
+import sys
 
 # SIZE
 SIZE_SCREEN = 1920, 1000
@@ -7,9 +9,12 @@ SIZE_SCREEN = 1920, 1000
 COLOR_SCREEN = pygame.Color('pink')
 
 # OTHER
-active_scene = 1
+active_scene = 0
+MONEY = 0
+CRISTALLS = 0
 
 # INFO ABOUT CREATURES
+GROUP_PLAYER = pygame.sprite.Group()
 # PLAYER
 PLAYER_LEVEL = 1
 PLAYER_HP = 100
@@ -21,6 +26,7 @@ PLAYER_KOEF_CRIT = 1
 PLAYER_ARMOR = 50
 PLAYER_CHANCE_AVOIDANCE = 0.1
 PLAYER_WEAPON = 0  # сделаем базу данных из оружий
+PLAYER_IMAGE = None
 
 
 # для мобов буду свои значения
@@ -34,3 +40,19 @@ def download_save():
 def upload_save():
     #  будем использовать базу данных SQL
     pass
+
+
+def load_sprites():
+    global PLAYER_IMAGE
+
+    def load_image(road, name, ):
+        fullname = os.path.join(road, name)
+        # если файл не существует, то выходим
+        if not os.path.isfile(fullname):
+            print(f"Файл с изображением '{fullname}' не найден")
+            sys.exit()
+        image = pygame.image.load(fullname)
+        image = image.convert_alpha()
+        return image
+
+    PLAYER_IMAGE = load_image('Sprites/Creatures', '1.png')
