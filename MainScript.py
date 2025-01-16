@@ -13,9 +13,9 @@ class Controller:
         self.screen = pygame.display.set_mode(SIZE_SCREEN)
         load_sprites()
 
-        hero = Hero()
-        self.scenes = {0: Shop(hero),
-                       1: Battle(hero)}
+        self.hero = Hero()
+        self.scenes = {0: Shop(self.hero),
+                       1: Battle(self.hero)}
 
         self.running = True
         self.clock = pygame.time.Clock()
@@ -31,6 +31,8 @@ class Controller:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
+                if event.type == pygame.KEYDOWN:
+                    self.hero.update(event)
                 # добавление нужных обработчиков
                 # if event.type == pygame.MOUSEMOTION:
                 #     scene.update(event)
@@ -38,7 +40,7 @@ class Controller:
 
             scene.update()
             scene.draw(self.screen)
-
+            self.screen.blit(self.hero.image, self.hero.get_coords())  # отрисовка персонажа
             pygame.display.flip()
 
 

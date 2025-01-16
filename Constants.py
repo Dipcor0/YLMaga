@@ -55,4 +55,4 @@ def load_sprites():
         image = image.convert_alpha()
         return image
 
-    PLAYER_IMAGE = load_image('Sprites/Creatures', '1.png')
+    PLAYER_IMAGE = load_image('Sprites/Creatures', 'персонаж.png')
