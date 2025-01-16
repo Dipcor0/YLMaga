@@ -31,8 +31,9 @@ class Hero(Creature):
     def __init__(self):
         super().__init__(Constants.GROUP_PLAYER, Constants.PLAYER_IMAGE, (0, 0))
         self.speed = Constants.PLAYER_SPEED_MOVE
-        self.coord_x = 500                                            # куча данных персонажа. От сюда
-        self.coord_y = 500
+        self.can_move = True
+        self.rect.x = 500                                            # куча данных персонажа. От сюда
+        self.rect.y = 500
         self.level = Constants.PLAYER_LEVEL
         self.hp = Constants.PLAYER_HP
         self.regen = Constants.PLAYER_REGEN
@@ -43,21 +44,21 @@ class Hero(Creature):
         self.chance_avoidence = Constants.PLAYER_CHANCE_AVOIDANCE    # До сюда
         self.inventory = []
     def update(self, event=None):
-        if event.key == pygame.K_w:
-            self.move(0, -self.speed)
-        if event.key == pygame.K_s:
-            self.move(0, self.speed)
-        if event.key == pygame.K_a:
-            self.move(-self.speed, 0)
-        if event.key == pygame.K_d:
-            self.move(self.speed, 0)
+        if self.can_move:
+            if event.key == pygame.K_w:
+                self.move(0, -self.speed)
+            if event.key == pygame.K_s:
+                self.move(0, self.speed)
+            if event.key == pygame.K_a:
+                self.move(-self.speed, 0)
+            if event.key == pygame.K_d:
+                self.move(self.speed, 0)
 
-    def move(self, dx, dy): # изменение координаты во время движения
-      self.coord_x += dx
-      self.coord_y += dy
+    def move(self, dx, dy):  # изменение координаты во время движения
+        self.rect = self.rect.move(dx, dy)
 
     def get_coords(self):
-        return [self.coord_x, self.coord_y]
+        return [self.rect.x, self.rect.y]
 
     def get_hp(self):
         return self.hp
@@ -67,3 +68,6 @@ class Hero(Creature):
 
     def get_inventory(self):
         return self.inventory
+
+    def block_move(self):
+        self.can_move = not self.can_move

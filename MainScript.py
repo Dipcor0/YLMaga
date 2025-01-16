@@ -4,13 +4,13 @@ import Constants
 from Equipment import *
 from Scenes import Shop, Battle
 from Creatures import Hero
-from Constants import SIZE_SCREEN, active_scene, load_sprites
+from Constants import SIZE_SCREEN, active_scene, load_sprites, GROUP_PLAYER
 
 
 class Controller:
     def __enter__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode(SIZE_SCREEN)
+        self.screen = pygame.display.set_mode(SIZE_SCREEN, pygame.FULLSCREEN)
         load_sprites()
 
         self.hero = Hero()
@@ -33,6 +33,7 @@ class Controller:
                     self.running = False
                 if event.type == pygame.KEYDOWN:
                     self.hero.update(event)
+                    scene.update(event)
                 # добавление нужных обработчиков
                 # if event.type == pygame.MOUSEMOTION:
                 #     scene.update(event)
@@ -40,7 +41,6 @@ class Controller:
 
             scene.update()
             scene.draw(self.screen)
-            self.screen.blit(self.hero.image, self.hero.get_coords())  # отрисовка персонажа
             pygame.display.flip()
 
 
