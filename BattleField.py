@@ -1,6 +1,6 @@
 import pygame
 import random
-import Constants
+from Constants import UI_HEIGHT, PLAYER_SPEED_MOVE, RED, PLAYER_HP, PLAYER_ARMOR, BLUE, WHITE, SLOT_SIZE, INVENTORY_SLOTS, FPS, GRAY, BLACK
 
 # Инициализация Pygame
 pygame.init()
