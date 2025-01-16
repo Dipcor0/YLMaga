@@ -7,6 +7,12 @@ SIZE_SCREEN = 1920, 1000
 
 # COLOR
 COLOR_SCREEN = pygame.Color('pink')
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+GRAY = (100, 100, 100)
 
 # OTHER
 active_scene = 0
@@ -20,7 +26,7 @@ PLAYER_LEVEL = 1
 PLAYER_HP = 100
 PLAYER_REGEN = 1  # * t
 PLAYER_HIT = 10
-PLAYER_SPEED_MOVE = 52
+PLAYER_SPEED_MOVE = 5 # я затестил 52 чето не то, поэтому лучше 5
 PLAYER_CHANCE_CRIT = 0.1
 PLAYER_KOEF_CRIT = 1
 PLAYER_ARMOR = 50
@@ -28,7 +34,12 @@ PLAYER_CHANCE_AVOIDANCE = 0.1
 PLAYER_WEAPON = 0  # сделаем базу данных из оружий
 PLAYER_IMAGE = None
 
-
+# Для инвентаря
+SLOT_SIZE = 50
+WIDTH, HEIGHT = 800, 600
+FPS = 60
+INVENTORY_SLOTS = 5  # Количество ячеек в инвентаре
+UI_HEIGHT = 200
 # для мобов буду свои значения
 
 
