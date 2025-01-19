@@ -4,6 +4,7 @@ import sys
 
 # SIZE
 SIZE_SCREEN = 1920, 1000
+SIZE_ZONE_STORE = 450, 450
 
 # COLOR
 COLOR_SCREEN = pygame.Color('pink')
@@ -15,7 +16,6 @@ BLUE = (0, 0, 255)
 GRAY = (100, 100, 100)
 
 # OTHER
-active_scene = 0
 MONEY = 0
 CRISTALLS = 0
 
