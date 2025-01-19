@@ -16,7 +16,6 @@ BLUE = (0, 0, 255)
 GRAY = (100, 100, 100)
 
 # OTHER
-active_scene = 0
 MONEY = 0
 CRISTALLS = 0
 

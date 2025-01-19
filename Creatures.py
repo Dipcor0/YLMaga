@@ -10,7 +10,7 @@ class Creature(pygame.sprite.Sprite):
         self.rect.x = pos[0]
         self.rect.y = pos[1]
 
-    def update(self, event=None):
+    def update(self, event=None, tick=None):
         pass
 
     def draw(self, screen):
@@ -22,9 +22,22 @@ class Boss(Creature):
         super().__init__(group, image, pos)
 
 
+# пример противника
 class Enemy(Creature):
     def __init__(self, group, image, pos):
         super().__init__(group, image, pos)
+        self.money = 52
+        self.exp = 52
+        self.hp = 1000
+
+    def get_damage(self, hit: int):
+        self.hp -= hit
+        if self.hp <= 0:
+            self.kill()
+
+    def kill(self):
+        # что-то, чтобы противник изчез с поля
+        return self.money, self.exp
 
 
 class Hero(Creature):
@@ -32,7 +45,7 @@ class Hero(Creature):
         super().__init__(Constants.GROUP_PLAYER, Constants.PLAYER_IMAGE, (0, 0))
         self.speed = Constants.PLAYER_SPEED_MOVE
         self.can_move = True
-        self.rect.x = 500                                            # куча данных персонажа. От сюда
+        self.rect.x = 500  # куча данных персонажа. От сюда
         self.rect.y = 500
         self.level = Constants.PLAYER_LEVEL
         self.hp = Constants.PLAYER_HP
@@ -41,9 +54,10 @@ class Hero(Creature):
         self.chane_crit = Constants.PLAYER_CHANCE_CRIT
         self.koef_krit = Constants.PLAYER_KOEF_CRIT
         self.armor = Constants.PLAYER_ARMOR
-        self.chance_avoidence = Constants.PLAYER_CHANCE_AVOIDANCE    # До сюда
+        self.chance_avoidence = Constants.PLAYER_CHANCE_AVOIDANCE  # До сюда
         self.inventory = []
-    def update(self, event=None):
+
+    def update(self, event=None, tick=None):
         if self.can_move:
             if event.key == pygame.K_w:
                 self.move(0, -self.speed)
@@ -71,3 +85,15 @@ class Hero(Creature):
 
     def block_move(self):
         self.can_move = not self.can_move
+
+    def block_right(self):
+        pass
+
+    def block_left(self):
+        pass
+
+    def block_up(self):
+        pass
+
+    def block_down(self):
+        pass

@@ -8,7 +8,7 @@ class Shop:
         self.store = Store((0, SIZE_SCREEN[1] // 4), self.hero)
         self.upgrade = Upgrade((SIZE_SCREEN[0] - SIZE_ZONE_STORE[0], SIZE_SCREEN[1] // 4), self.hero)
 
-    def update(self, event=None):
+    def update(self, event=None, tick=None):
         self.store.update()
         self.upgrade.update()
         if event:
@@ -30,7 +30,7 @@ class Battle:
     def __init__(self, hero):
         self.hero = hero
 
-    def update(self, event=None):
+    def update(self, event=None, tick=None):
         pass
 
     def draw(self, screen):

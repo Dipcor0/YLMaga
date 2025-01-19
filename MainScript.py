@@ -1,10 +1,10 @@
 import pygame
-
-import Constants
 from Equipment import *
 from Scenes import Shop, Battle
 from Creatures import Hero
-from Constants import SIZE_SCREEN, active_scene, load_sprites, GROUP_PLAYER
+from Constants import SIZE_SCREEN, load_sprites, GROUP_PLAYER
+
+active_scene = 0
 
 
 class Controller:
