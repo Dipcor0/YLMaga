@@ -58,15 +58,16 @@ class Hero(Creature):
         self.inventory = []
 
     def update(self, event=None, tick=None):
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_w] and self.rect.top > 0:
-            self.rect.y -= self.speed
-        if keys[pygame.K_s] and self.rect.bottom < Constants.SIZE_SCREEN[1]:
-            self.rect.y += self.speed
-        if keys[pygame.K_a] and self.rect.left > 0:
-            self.rect.x -= self.speed
-        if keys[pygame.K_d] and self.rect.right < Constants.SIZE_SCREEN[0]:
-            self.rect.x += self.speed
+        if self.can_move:
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_w] and self.rect.top > 0:
+                self.rect.y -= self.speed
+            if keys[pygame.K_s] and self.rect.bottom < Constants.SIZE_SCREEN[1]:
+                self.rect.y += self.speed
+            if keys[pygame.K_a] and self.rect.left > 0:
+                self.rect.x -= self.speed
+            if keys[pygame.K_d] and self.rect.right < Constants.SIZE_SCREEN[0]:
+                self.rect.x += self.speed
 
     def move(self, dx, dy):  # изменение координаты во время движения
         self.rect = self.rect.move(dx, dy)
