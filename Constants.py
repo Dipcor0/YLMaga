@@ -35,11 +35,14 @@ PLAYER_WEAPON = 0  # сделаем базу данных из оружий
 PLAYER_IMAGE = None
 
 # Для инвентаря
+UI_HEIGHT = 200
+SCREEN_WIDTH_BATTLE, SCREEN_HEIGHT_BATTLE = pygame.display.set_mode((0, 0), pygame.FULLSCREEN).get_size()
+FIELD_WIDTH = SCREEN_WIDTH_BATTLE
+FIELD_HEIGHT = SCREEN_HEIGHT_BATTLE - UI_HEIGHT
 SLOT_SIZE = 50
 WIDTH, HEIGHT = 800, 600
 FPS = 60
 INVENTORY_SLOTS = 5  # Количество ячеек в инвентаре
-UI_HEIGHT = 200
 # для мобов буду свои значения
 
 

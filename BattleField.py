@@ -1,6 +1,8 @@
 import pygame
 import random
-from Constants import UI_HEIGHT, PLAYER_SPEED_MOVE, PLAYER_HP, PLAYER_ARMOR, RED, WHITE, SLOT_SIZE, INVENTORY_SLOTS, FPS, GRAY
+from Equipment import Needles
+from Constants import UI_HEIGHT, PLAYER_SPEED_MOVE, PLAYER_HP, PLAYER_ARMOR, RED, WHITE, SLOT_SIZE, INVENTORY_SLOTS, FIELD_HEIGHT, FIELD_WIDTH, FPS, GRAY
+
 # Инициализация Pygame
 pygame.init()
 
@@ -9,10 +11,6 @@ screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption("BattleGame")
 clock = pygame.time.Clock()
 
-# Поле боя
-SCREEN_WIDTH, SCREEN_HEIGHT = screen.get_size()
-FIELD_WIDTH = SCREEN_WIDTH
-FIELD_HEIGHT = SCREEN_HEIGHT - UI_HEIGHT
 
 # Загрузка изображений
 background_image = pygame.image.load("Sprites/Creatures/полеБоя.png").convert_alpha()
@@ -32,6 +30,8 @@ coin_image = pygame.transform.scale(coin_image, (30, 30))
 
 mob_image = pygame.image.load("Sprites/Creatures/моб.png").convert_alpha()
 mob_image = pygame.transform.scale(mob_image, (60, 60))  # Увеличен размер мобов
+
+
 
 # Игрок
 class Player(pygame.sprite.Sprite):
@@ -54,6 +54,7 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_d] and self.rect.right < FIELD_WIDTH:
             self.rect.x += self.speed
 
+
 # Моб
 class Mob(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -64,6 +65,7 @@ class Mob(pygame.sprite.Sprite):
         self.speed = 2
         self.attack_cooldown = 1000  # 1 секунда
         self.last_attack_time = pygame.time.get_ticks()
+        self.hp = 100  # Добавлено здоровье
 
     def can_attack(self):
         now = pygame.time.get_ticks()
@@ -93,7 +95,7 @@ class Interface:
         self.crystals = 0
 
     def draw(self, surface):
-        pygame.draw.rect(surface, GRAY, (0, FIELD_HEIGHT, SCREEN_WIDTH, UI_HEIGHT))
+        pygame.draw.rect(surface, GRAY, (0, FIELD_HEIGHT, FIELD_WIDTH, UI_HEIGHT))
         surface.blit(heart_image, (10, FIELD_HEIGHT + 10))
         surface.blit(armor_image, (10, FIELD_HEIGHT + 50))
         surface.blit(crystal_image, (10, FIELD_HEIGHT + 90))
@@ -117,14 +119,22 @@ class Interface:
 
 
 # Битва
+
+
 class Battle:
     def __init__(self):
         self.hero = Player()
         self.mobs = pygame.sprite.Group()
+        self.needles = pygame.sprite.Group()
         self.all_sprites = pygame.sprite.Group(self.hero)
         self.ui = Interface()
         self.spawn_timer = 0
         self.game_over = False
+
+    def spawn_needle(self):
+        if not self.game_over:
+            needle = Needles(self.needles, self.hero.rect.center, self.mobs)
+            self.all_sprites.add(needle)
 
     def spawn_mob(self):
         if not self.game_over:
@@ -135,29 +145,32 @@ class Battle:
             self.all_sprites.add(mob)
 
     def check_collisions(self):
-        for mob in self.mobs:
+        for mob in self.mobs.copy():
             if self.hero.rect.colliderect(mob.rect) and mob.can_attack():
                 if self.ui.armor > 0:
                     self.ui.armor -= 10
                 else:
                     self.ui.hp -= 10
-
                 if self.ui.hp <= 0:
                     self.game_over = True
 
-    def update(self):
+            if mob.hp <= 0:
+                mob.kill()  # Удаляем моба, если его здоровье <= 0
+
+    def update_all(self):
         if not self.game_over:
             self.hero.update()
-            for mob in self.mobs:
-                mob.update(self.hero)
+            self.mobs.update(self.hero)
+            self.needles.update(self.mobs)
             self.check_collisions()
 
             self.spawn_timer += 1
             if self.spawn_timer > FPS * 2:
                 self.spawn_mob()
+                self.spawn_needle()
                 self.spawn_timer = 0
 
-    def draw(self):
+    def draw_all(self, screen):
         screen.blit(background_image, (0, 0))
         pygame.draw.rect(screen, WHITE, (0, 0, FIELD_WIDTH, FIELD_HEIGHT), 5)
         self.all_sprites.draw(screen)
@@ -165,7 +178,8 @@ class Battle:
 
         if self.game_over:
             game_over_text = self.ui.font.render("GAME OVER", True, RED)
-            screen.blit(game_over_text, (SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 50))
+            screen.blit(game_over_text, (FIELD_WIDTH // 2 - 100, FIELD_HEIGHT // 2 - 50))
+
 
 # Основной цикл
 battle = Battle()
@@ -175,8 +189,8 @@ while running:
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             running = False
 
-    battle.update()
-    battle.draw()
+    battle.update_all()
+    battle.draw_all(screen)
 
     pygame.display.flip()
     clock.tick(FPS)
