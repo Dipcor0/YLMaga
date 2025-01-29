@@ -56,6 +56,7 @@ class Store:
         self.hero = hero
 
     def update(self, event=None):
+        self.hero.update()
         if event:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_e and not self.open_window and self.player_in_zone:

@@ -66,7 +66,7 @@ class Hero(Creature):
                 self.rect.y += self.speed
             if keys[pygame.K_a] and self.rect.left > 0:
                 self.rect.x -= self.speed
-            if keys[pygame.K_d] and self.rect.right < Constants.SIZE_SCREEN[0]:
+            if keys[pygame.K_d] and self.rect.right < Constants.SIZE_SCREEN[1]:
                 self.rect.x += self.speed
 
     def move(self, dx, dy):  # изменение координаты во время движения
