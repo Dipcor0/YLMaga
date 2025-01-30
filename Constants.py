@@ -2,8 +2,9 @@ import pygame
 import os
 import sys
 
+screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 # SIZE
-SIZE_SCREEN = 1920, 1000
+SIZE_SCREEN = screen.get_size()
 SIZE_ZONE_STORE = 450, 450
 
 # COLOR
