@@ -1,5 +1,6 @@
 import pygame
 import Constants
+from Equipment import Armor
 
 
 class Creature(pygame.sprite.Sprite):
@@ -56,6 +57,7 @@ class Hero(Creature):
         self.armor = Constants.PLAYER_ARMOR
         self.chance_avoidence = Constants.PLAYER_CHANCE_AVOIDANCE  # До сюда
         self.inventory = []
+        self.armor_sprite = None  # Добавляем атрибут для брони
 
     def update(self, event=None, tick=None):
         if self.can_move:
@@ -98,3 +100,17 @@ class Hero(Creature):
 
     def block_down(self):
         pass
+
+    def upgrade_characteristics(self, armor):
+        if armor:
+            armor.upgrade_armor(self)
+
+
+'''
+TODO: Сделать csv файл, в котором будут хранится данные о всех оружиях и снаряжении. 
+В снаряжении будет колонка name - имя снаряжения, use_now - в инвентаре ли снаряга (значения 0/1), 
+buff_type - тип улучшения (hp, armor, regen и тд), quantity - значение усиления (10, 20, 100, 250, 500)
+TODO: В функцию upgrade_characteristics передавать список  из csv файла с именами снаряжения, 
+сделать цикл проверки использования в инвентаре, определения типа улучшения, 
+добавления добавочного значения к истинному
+'''
