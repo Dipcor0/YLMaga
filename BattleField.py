@@ -1,6 +1,6 @@
 import pygame
 import random
-from Equipment import Needles
+from Equipment import Needles, Breastplate, Boots
 from Constants import UI_HEIGHT, PLAYER_SPEED_MOVE, PLAYER_HP, PLAYER_ARMOR, RED, WHITE, SLOT_SIZE, INVENTORY_SLOTS, FIELD_HEIGHT, FIELD_WIDTH, FPS, GRAY
 
 # Инициализация Pygame
@@ -53,6 +53,12 @@ class Player(pygame.sprite.Sprite):
             self.rect.x -= self.speed
         if keys[pygame.K_d] and self.rect.right < FIELD_WIDTH:
             self.rect.x += self.speed
+
+    def upgrade_characteristics(self, armor, boots):
+        if armor:
+            armor.upgrade_armor(self)
+        if boots:
+            boots.upgrade_armor(self)
 
 
 # Моб
@@ -131,6 +137,15 @@ class Battle:
         self.spawn_timer = 0
         self.game_over = False
 
+        self.breastplate = Breastplate(self.hero)
+        self.all_sprites.add(self.breastplate)
+        self.breastplate.upgrade_armor(self.ui)
+
+        self.boots = Boots(self.hero)
+        self.all_sprites.add(self.boots)
+        self.boots.upgrade_armor(self.ui)
+
+
     def spawn_needle(self):
         if not self.game_over:
             needle = Needles(self.needles, self.hero.rect.center, self.mobs)
@@ -160,6 +175,8 @@ class Battle:
     def update_all(self):
         if not self.game_over:
             self.hero.update()
+            self.breastplate.update(self.hero)
+            self.boots.update(self.hero)
             self.mobs.update(self.hero)
             self.needles.update(self.mobs)
             self.check_collisions()

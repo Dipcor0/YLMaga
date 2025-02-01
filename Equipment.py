@@ -59,3 +59,33 @@ class Needles(pygame.sprite.Sprite):
 
 def get_weapon():
     pass
+
+class Breastplate(pygame.sprite.Sprite):
+    def __init__(self, hero):
+        super().__init__()
+        self.image = pygame.image.load("Sprites/Creatures/нагрудник.png").convert_alpha()
+        self.image = pygame.transform.scale(self.image, (22, 22))  # Пример размера
+        self.rect = self.image.get_rect()
+        self.hero = hero
+        self.rect.center = (self.hero.rect.centerx - 3, self.hero.rect.centery + 2)  # Example offset
+
+    def update(self, hero):
+        self.rect.center = (hero.rect.centerx - 3, hero.rect.centery + 2)  # Example offset
+
+    def upgrade_armor(self, hero):
+        hero.armor += 500
+
+class Boots(pygame.sprite.Sprite):
+    def __init__(self, hero):
+        super().__init__()
+        self.image = pygame.image.load("Sprites/Creatures/ботинки.png").convert_alpha()
+        self.image = pygame.transform.scale(self.image, (22, 22))
+        self.rect = self.image.get_rect()
+        self.hero = hero
+        self.rect.center = (self.hero.rect.centerx - 3, self.hero.rect.centery + 15)
+
+    def update(self, hero):
+        self.rect.center = (hero.rect.centerx - 3, hero.rect.centery + 15)
+
+    def upgrade_armor(self, hero):
+        hero.armor += 250

@@ -2,7 +2,7 @@ import pygame
 from Equipment import *
 from Scenes import Shop, Battle
 from Creatures import Hero
-from Constants import SIZE_SCREEN, load_sprites, GROUP_PLAYER
+from Constants import SIZE_SCREEN, load_sprites, GROUP_PLAYER, FPS
 
 active_scene = 0
 
@@ -27,7 +27,6 @@ class Controller:
     def run(self):
         while self.running:
             scene = self.scenes[active_scene]
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
@@ -42,7 +41,7 @@ class Controller:
             scene.update()
             scene.draw(self.screen)
             pygame.display.flip()
-
+            self.clock.tick(FPS)
 
 with Controller() as game:
     game.run()
