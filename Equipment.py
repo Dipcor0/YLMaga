@@ -26,8 +26,8 @@ class Needles(pygame.sprite.Sprite):
         super().__init__(group)
         self.image = needle_image  # Загруженное изображение иглы
         self.rect = self.image.get_rect(center=pos_hero)
-        self.speed = 5
-        self.damage = 20
+        self.speed = 10
+        self.damage = 50
         self.direction = self.get_direction(enemies)
         self.hit_targets = set()  # Запоминаем, кого уже поразили
 

@@ -10,7 +10,7 @@ pygame.init()
 screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption("BattleGame")
 clock = pygame.time.Clock()
-
+ 
 
 # Загрузка изображений
 background_image = pygame.image.load("Sprites/Creatures/полеБоя.png").convert_alpha()
