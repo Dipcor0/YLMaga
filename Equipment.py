@@ -62,9 +62,6 @@ class Needles(pygame.sprite.Sprite):
                 self.rect.bottom < 0 or self.rect.top > FIELD_HEIGHT):
             self.kill()
 
-import pygame
-import math
-
 class Fireball(pygame.sprite.Sprite):
     def __init__(self, group, pos_hero, enemies):
         super().__init__(group)
