@@ -31,6 +31,11 @@ class Needles(pygame.sprite.Sprite):
         self.direction = self.get_direction(enemies)
         self.hit_targets = set()  # Запоминаем, кого уже поразили
 
+    def spawn_needle(self):
+        if not self.game_over:
+            needle = Needles(self.needles, self.hero.rect.center, self.mobs)
+            self.all_sprites.add(needle)
+
     def get_direction(self, enemies):
         if enemies:
             target = min(enemies, key=lambda enemy: math.hypot(self.rect.x - enemy.rect.x, self.rect.y - enemy.rect.y))
@@ -56,6 +61,71 @@ class Needles(pygame.sprite.Sprite):
         if (self.rect.right < 0 or self.rect.left > FIELD_WIDTH or
                 self.rect.bottom < 0 or self.rect.top > FIELD_HEIGHT):
             self.kill()
+
+import pygame
+import math
+
+class Fireball(pygame.sprite.Sprite):
+    def __init__(self, group, pos_hero, enemies):
+        super().__init__(group)
+        self.image = pygame.image.load("фаербол.png")  # Загруженное изображение фаербола
+        self.rect = self.image.get_rect(center=pos_hero)
+        self.speed = 10
+        self.damage = 50
+        self.direction = self.get_direction(enemies)
+
+    def spawn_fireball(self, group, pos_hero, enemies):
+        fireball = Fireball(group, pos_hero, enemies)
+        group.add(fireball)
+
+    def get_direction(self, enemies):
+        if enemies:
+            target = min(enemies, key=lambda enemy: math.hypot(self.rect.x - enemy.rect.x, self.rect.y - enemy.rect.y))
+            dir_x = target.rect.x - self.rect.x
+            dir_y = target.rect.y - self.rect.y
+            length = math.hypot(dir_x, dir_y)
+            if length != 0:
+                return dir_x / length, dir_y / length
+        return 1, 0  # Если врагов нет, летит вправо
+
+    def update(self, enemies):
+        self.rect.x += self.direction[0] * self.speed
+        self.rect.y += self.direction[1] * self.speed
+
+        for enemy in enemies.copy():
+            if self.rect.colliderect(enemy.rect):
+                enemy.hp -= self.damage  # Наносим урон
+                if enemy.hp <= 0:
+                    enemy.kill()  # Удаляем моба после смерти
+                self.kill()  # Фаербол исчезает после попадания
+                break
+
+        # Удаляем фаербол, если он выходит за границы экрана
+        if (self.rect.right < 0 or self.rect.left > FIELD_WIDTH or
+                self.rect.bottom < 0 or self.rect.top > FIELD_HEIGHT):
+            self.kill()
+
+class SocialDistance(pygame.sprite.Sprite):
+    def __init__(self, group, pos_hero, radius=50, damage=30):
+        super().__init__(group)
+        self.group = group
+        self.pos = pos_hero
+        self.radius = radius
+        self.damage = damage
+
+    def spawn_social_distance(self, group, pos_hero):
+        zone = SocialDistance(group, pos_hero)
+        group.add(zone)
+
+    def update(self, enemies):
+        for enemy in enemies.copy():
+            distance = math.hypot(self.pos[0] - enemy.rect.centerx, self.pos[1] - enemy.rect.centery)
+            if distance <= self.radius:
+                enemy.hp -= self.damage / 60  # Урон в секунду, делим на FPS
+                if enemy.hp <= 0:
+                    enemy.kill()
+
+
 
 def get_weapon():
     pass

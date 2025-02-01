@@ -145,12 +145,6 @@ class Battle:
         self.all_sprites.add(self.boots)
         self.boots.upgrade_armor(self.ui)
 
-
-    def spawn_needle(self):
-        if not self.game_over:
-            needle = Needles(self.needles, self.hero.rect.center, self.mobs)
-            self.all_sprites.add(needle)
-
     def spawn_mob(self):
         if not self.game_over:
             x = random.randint(0, FIELD_WIDTH)
