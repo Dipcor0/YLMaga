@@ -1,12 +1,16 @@
 import pygame
-from Constants import SIZE_SCREEN, SIZE_ZONE_STORE, COLOR_SCREEN, GROUP_PLAYER, WHITE
+
+import Constants
+from Constants import SIZE_SCREEN, SIZE_ZONE_STORE, COLOR_SCREEN, WHITE
 
 
 class Shop:
     def __init__(self, hero):
         self.hero = hero
-        self.store = Store((0, SIZE_SCREEN[1] // 4), self.hero)
-        self.upgrade = Upgrade((SIZE_SCREEN[0] - SIZE_ZONE_STORE[0], SIZE_SCREEN[1] // 4), self.hero)
+        self.all_sprites = pygame.sprite.Group()
+        self.all_sprites.add(self.hero)
+        self.store = Store((0, SIZE_SCREEN[1] // 4), self.hero, self.all_sprites)
+        self.upgrade = Upgrade((SIZE_SCREEN[0] - SIZE_ZONE_STORE[0], SIZE_SCREEN[1] // 4), self.hero, self.all_sprites)
 
     def update(self, event=None, tick=None):
         self.store.update()
@@ -17,24 +21,10 @@ class Shop:
                 self.upgrade.update(event)
 
     def draw(self, screen):
-        screen.fill(COLOR_SCREEN)
-        GROUP_PLAYER.draw(screen)
+        screen.blit(Constants.BACKGROUND_MARKET_IMAGE, (0,0))
+        self.all_sprites.draw(screen)
         self.store.draw(screen)
         self.upgrade.draw(screen)
-
-    def _change_scene(self, scene: int):
-        pass
-
-
-class Battle:
-    def __init__(self, hero):
-        self.hero = hero
-
-    def update(self, event=None, tick=None):
-        pass
-
-    def draw(self, screen):
-        screen.fill('blue')
 
     def _change_scene(self, scene: int):
         pass
@@ -44,8 +34,9 @@ class Store:
     player_in_zone = False
     open_window = False
 
-    def __init__(self, pos, hero):
+    def __init__(self, pos, hero, group_player):
         self.pos = pos
+        self.group = group_player
         self.zone = pygame.sprite.Sprite()
         self.zone.image = pygame.Surface(SIZE_ZONE_STORE)
         self.zone.image.fill((0, 0, 0))
@@ -66,7 +57,7 @@ class Store:
                     self.open_window = False
                     self.hero.block_move()
         else:
-            if pygame.sprite.spritecollideany(self.zone, GROUP_PLAYER):
+            if pygame.sprite.spritecollideany(self.zone, self.group):
                 self.player_in_zone = True
 
             else:
@@ -87,8 +78,9 @@ class Upgrade:
     player_in_zone = False
     open_window = False
 
-    def __init__(self, pos, hero):
+    def __init__(self, pos, hero, group_player):
         self.pos = pos
+        self.group = group_player
         self.zone = pygame.sprite.Sprite()
         self.zone.image = pygame.Surface(SIZE_ZONE_STORE)
         self.zone.image.fill((0, 0, 0))
@@ -109,7 +101,7 @@ class Upgrade:
                     self.open_window = False
                     self.hero.block_move()
         else:
-            if pygame.sprite.spritecollideany(self.zone, GROUP_PLAYER):
+            if pygame.sprite.spritecollideany(self.zone, self.group):
                 self.player_in_zone = True
 
             else:

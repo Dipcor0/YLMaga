@@ -1,10 +1,11 @@
 import pygame
 from Equipment import *
-from Scenes import Shop, Battle
-from Creatures import Hero
-from Constants import SIZE_SCREEN, load_sprites, GROUP_PLAYER, FPS
+from Creatures import Player
+from Market import Shop
+from BattleField import Battle
+from Constants import SIZE_SCREEN, load_sprites, FPS
 
-active_scene = 0
+active_scene = 1
 
 
 class Controller:
@@ -13,7 +14,8 @@ class Controller:
         self.screen = pygame.display.set_mode(SIZE_SCREEN, pygame.FULLSCREEN)
         load_sprites()
 
-        self.hero = Hero()
+        self.hero = Player()
+        self.active_scene = active_scene
         self.scenes = {0: Shop(self.hero),
                        1: Battle(self.hero)}
 
@@ -26,22 +28,35 @@ class Controller:
 
     def run(self):
         while self.running:
-            scene = self.scenes[active_scene]
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
-                if event.type == pygame.KEYDOWN:
-                    self.hero.update(event)
-                    scene.update(event)
-                # добавление нужных обработчиков
-                # if event.type == pygame.MOUSEMOTION:
-                #     scene.update(event)
-                # по типу вот этого
+            scene = self.scenes[self.active_scene]
+            if self.active_scene == 0:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        self.running = False
+                    # if event.type == pygame.KEYDOWN:
+                    #     self.hero.update(event)
+                    #     scene.update(event)
+                    # добавление нужных обработчиков
+                    # if event.type == pygame.MOUSEMOTION:
+                    #     scene.update(event)
+                    # по типу вот этого
 
-            scene.update()
-            scene.draw(self.screen)
-            pygame.display.flip()
-            self.clock.tick(FPS)
+                scene.update()
+                scene.draw(self.screen)
+                pygame.display.flip()
+                self.clock.tick(FPS)
+            elif self.active_scene == 1:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                        self.active_scene = 0
+                        self.hero.rect.x = SIZE_SCREEN[0] // 2
+                        self.hero.rect.y = SIZE_SCREEN[1] // 2
+
+                scene.update_all()
+                scene.draw_all(self.screen)
+
+                pygame.display.flip()
+                self.clock.tick(FPS)
 
 with Controller() as game:
     game.run()

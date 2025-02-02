@@ -6,21 +6,6 @@ needle_image = pygame.image.load("Sprites/Creatures/needle_image.png").convert_a
 needle_image = pygame.transform.scale(needle_image, (30, 30))
 
 
-# пока еще надо подумать, что и как
-
-class Weapon(pygame.sprite.Sprite):  # там столько всего, что я думаю общим классом это не реализовать
-    def __init__(self, group):
-        super().__init__(group)
-        self.image = None  # нужная картинка
-        self.rect = self.image.get_rect()
-
-    def update(self, event=None, tick=None):
-        pass
-
-    def draw(self, screen):
-        pass
-
-
 class Needles(pygame.sprite.Sprite):
     def __init__(self, group, pos_hero, enemies):
         super().__init__(group)
@@ -62,11 +47,12 @@ class Needles(pygame.sprite.Sprite):
                 self.rect.bottom < 0 or self.rect.top > FIELD_HEIGHT):
             self.kill()
 
+
 class Fireball(pygame.sprite.Sprite):
     def __init__(self, group, pos_hero, enemies):
         super().__init__(group)
         self.image = pygame.image.load("Sprites/Creatures/фаербол.png").convert_alpha()
-        self.image = pygame.transform.scale(self.image, (30, 30))# Загружаем изображение
+        self.image = pygame.transform.scale(self.image, (30, 30))  # Загружаем изображение
         self.rect = self.image.get_rect(center=pos_hero)
         self.speed = 3  # Скорость чуть меньше, чем у иглы
         self.damage = 100  # Урон
@@ -104,6 +90,7 @@ class Fireball(pygame.sprite.Sprite):
                 self.rect.bottom < 0 or self.rect.top > FIELD_HEIGHT):
             self.kill()
 
+
 class SocialDistance(pygame.sprite.Sprite):
     def __init__(self, group, pos_hero, radius=50, damage=30):
         super().__init__(group)
@@ -125,9 +112,9 @@ class SocialDistance(pygame.sprite.Sprite):
                     enemy.kill()
 
 
-
 def get_weapon():
     pass
+
 
 class Breastplate(pygame.sprite.Sprite):
     def __init__(self, hero):
@@ -143,6 +130,7 @@ class Breastplate(pygame.sprite.Sprite):
 
     def upgrade_armor(self, hero):
         hero.armor += 500
+
 
 class Boots(pygame.sprite.Sprite):
     def __init__(self, hero):
