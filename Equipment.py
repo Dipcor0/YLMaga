@@ -65,15 +65,17 @@ class Needles(pygame.sprite.Sprite):
 class Fireball(pygame.sprite.Sprite):
     def __init__(self, group, pos_hero, enemies):
         super().__init__(group)
-        self.image = pygame.image.load("фаербол.png")  # Загруженное изображение фаербола
+        self.image = pygame.image.load("Sprites/Creatures/фаербол.png").convert_alpha()
+        self.image = pygame.transform.scale(self.image, (30, 30))# Загружаем изображение
         self.rect = self.image.get_rect(center=pos_hero)
-        self.speed = 10
-        self.damage = 50
+        self.speed = 3  # Скорость чуть меньше, чем у иглы
+        self.damage = 100  # Урон
         self.direction = self.get_direction(enemies)
 
-    def spawn_fireball(self, group, pos_hero, enemies):
-        fireball = Fireball(group, pos_hero, enemies)
-        group.add(fireball)
+    def spawn_fireball(self):
+        if not self.game_over:
+            fireball = Fireball(self.fireballs, self.hero.rect.center, self.mobs)
+            self.all_sprites.add(fireball)
 
     def get_direction(self, enemies):
         if enemies:
@@ -94,8 +96,8 @@ class Fireball(pygame.sprite.Sprite):
                 enemy.hp -= self.damage  # Наносим урон
                 if enemy.hp <= 0:
                     enemy.kill()  # Удаляем моба после смерти
-                self.kill()  # Фаербол исчезает после попадания
-                break
+                self.kill()  # Удаляем фаербол после первого попадания
+                return
 
         # Удаляем фаербол, если он выходит за границы экрана
         if (self.rect.right < 0 or self.rect.left > FIELD_WIDTH or

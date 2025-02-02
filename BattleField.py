@@ -1,6 +1,6 @@
 import pygame
 import random
-from Equipment import Needles, Breastplate, Boots
+from Equipment import Needles, Breastplate, Boots, Fireball
 from Constants import UI_HEIGHT, PLAYER_SPEED_MOVE, PLAYER_HP, PLAYER_ARMOR, RED, WHITE, SLOT_SIZE, INVENTORY_SLOTS, FIELD_HEIGHT, FIELD_WIDTH, FPS, GRAY
 
 # Инициализация Pygame
@@ -132,6 +132,7 @@ class Battle:
         self.hero = Player()
         self.mobs = pygame.sprite.Group()
         self.needles = pygame.sprite.Group()
+        self.fireballs = pygame.sprite.Group()
         self.all_sprites = pygame.sprite.Group(self.hero)
         self.ui = Interface()
         self.spawn_timer = 0
@@ -153,6 +154,11 @@ class Battle:
             self.mobs.add(mob)
             self.all_sprites.add(mob)
 
+    def spawn_fireball(self):
+        if not self.game_over:
+            fireball = Fireball(self.fireballs, self.hero.rect.center, self.mobs)
+            self.all_sprites.add(fireball)
+
     def check_collisions(self):
         for mob in self.mobs.copy():
             if self.hero.rect.colliderect(mob.rect) and mob.can_attack():
@@ -173,12 +179,13 @@ class Battle:
             self.boots.update(self.hero)
             self.mobs.update(self.hero)
             self.needles.update(self.mobs)
+            self.fireballs.update(self.mobs)
             self.check_collisions()
 
             self.spawn_timer += 1
             if self.spawn_timer > FPS * 2:
                 self.spawn_mob()
-                self.spawn_needle()
+                self.spawn_fireball()
                 self.spawn_timer = 0
 
     def draw_all(self, screen):
