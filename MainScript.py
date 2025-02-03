@@ -31,20 +31,9 @@ class Controller:
             scene = self.scenes[self.active_scene]
             if self.active_scene == 0:
                 for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
+                    if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                         self.running = False
-                    # if event.type == pygame.KEYDOWN:
-                    #     self.hero.update(event)
-                    #     scene.update(event)
-                    # добавление нужных обработчиков
-                    # if event.type == pygame.MOUSEMOTION:
-                    #     scene.update(event)
-                    # по типу вот этого
 
-                scene.update()
-                scene.draw(self.screen)
-                pygame.display.flip()
-                self.clock.tick(FPS)
             elif self.active_scene == 1:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
@@ -52,11 +41,11 @@ class Controller:
                         self.hero.rect.x = SIZE_SCREEN[0] // 2
                         self.hero.rect.y = SIZE_SCREEN[1] // 2
 
-                scene.update_all()
-                scene.draw_all(self.screen)
+            scene.update_all()
+            scene.draw_all(self.screen)
+            pygame.display.flip()
+            self.clock.tick(FPS)
 
-                pygame.display.flip()
-                self.clock.tick(FPS)
 
 with Controller() as game:
     game.run()

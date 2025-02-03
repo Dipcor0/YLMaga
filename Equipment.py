@@ -1,25 +1,22 @@
 import pygame
 import math
-from Constants import FIELD_WIDTH, FIELD_HEIGHT
+from Constants import FIELD_WIDTH, FIELD_HEIGHT, PLAYER_EQUIPMENT, FPS
 
 needle_image = pygame.image.load("Sprites/Creatures/needle_image.png").convert_alpha()
 needle_image = pygame.transform.scale(needle_image, (30, 30))
 
 
 class Needles(pygame.sprite.Sprite):
+    reload = FPS * 2 // 3
+
     def __init__(self, group, pos_hero, enemies):
         super().__init__(group)
         self.image = needle_image  # Загруженное изображение иглы
         self.rect = self.image.get_rect(center=pos_hero)
         self.speed = 10
-        self.damage = 50
+        self.damage = 30
         self.direction = self.get_direction(enemies)
         self.hit_targets = set()  # Запоминаем, кого уже поразили
-
-    def spawn_needle(self):
-        if not self.game_over:
-            needle = Needles(self.needles, self.hero.rect.center, self.mobs)
-            self.all_sprites.add(needle)
 
     def get_direction(self, enemies):
         if enemies:
@@ -49,6 +46,8 @@ class Needles(pygame.sprite.Sprite):
 
 
 class Fireball(pygame.sprite.Sprite):
+    reload = FPS * 2
+
     def __init__(self, group, pos_hero, enemies):
         super().__init__(group)
         self.image = pygame.image.load("Sprites/Creatures/фаербол.png").convert_alpha()
@@ -57,11 +56,6 @@ class Fireball(pygame.sprite.Sprite):
         self.speed = 3  # Скорость чуть меньше, чем у иглы
         self.damage = 100  # Урон
         self.direction = self.get_direction(enemies)
-
-    def spawn_fireball(self):
-        if not self.game_over:
-            fireball = Fireball(self.fireballs, self.hero.rect.center, self.mobs)
-            self.all_sprites.add(fireball)
 
     def get_direction(self, enemies):
         if enemies:
@@ -92,28 +86,42 @@ class Fireball(pygame.sprite.Sprite):
 
 
 class SocialDistance(pygame.sprite.Sprite):
-    def __init__(self, group, pos_hero, radius=50, damage=30):
+    reload = FPS
+
+    def __init__(self, group, pos_hero, radius=100, damage=10):
         super().__init__(group)
+        self.image = pygame.Surface((radius * 2, radius * 2), pygame.SRCALPHA)
+        pygame.draw.circle(self.image, (207, 76, 0) + (128,), (radius, radius),
+                           radius)  # 128 - это уровень прозрачности
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = pos_hero[0] - radius, pos_hero[1] - radius
         self.group = group
-        self.pos = pos_hero
+        # self.pos = pos_hero
         self.radius = radius
         self.damage = damage
-
-    def spawn_social_distance(self, group, pos_hero):
-        zone = SocialDistance(group, pos_hero)
-        group.add(zone)
+        self.live = FPS * 3.5
+        self.live_timer = 0
+        self.timer_damage = FPS // 3
+        self.mobs_damaged = {}
 
     def update(self, enemies):
+        self.live_timer += 1
+        if self.live_timer > self.live:
+            self.kill()
         for enemy in enemies.copy():
-            distance = math.hypot(self.pos[0] - enemy.rect.centerx, self.pos[1] - enemy.rect.centery)
+            x, y = self.rect.x + self.radius - enemy.rect.centerx, self.rect.y + self.radius - enemy.rect.centery
+            distance = math.sqrt(x * x + y * y)
             if distance <= self.radius:
-                enemy.hp -= self.damage / 60  # Урон в секунду, делим на FPS
-                if enemy.hp <= 0:
-                    enemy.kill()
-
-
-def get_weapon():
-    pass
+                if enemy in self.mobs_damaged.keys():
+                    self.mobs_damaged[enemy] += 1
+                    if self.mobs_damaged[enemy] >= self.timer_damage:
+                        enemy.hp -= self.damage
+                        self.mobs_damaged[enemy] = 0
+                else:
+                    self.mobs_damaged[enemy] = 0
+                    enemy.hp -= self.damage
+            if enemy.hp <= 0:
+                enemy.kill()
 
 
 class Breastplate(pygame.sprite.Sprite):
@@ -146,3 +154,13 @@ class Boots(pygame.sprite.Sprite):
 
     def upgrade_armor(self, hero):
         hero.armor += 250
+
+
+def get_weapon(index):
+    weapons = {0: Needles, 1: Fireball, 2: SocialDistance}
+    return weapons[index]
+
+
+def get_equipment(index):
+    items = {0: Breastplate, 1: Boots}
+    return items[index]

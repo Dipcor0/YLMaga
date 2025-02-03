@@ -1,6 +1,5 @@
 import pygame
 import random
-from Equipment import Needles, Breastplate, Boots, Fireball
 from Constants import UI_HEIGHT, PLAYER_SPEED_MOVE, PLAYER_HP, PLAYER_ARMOR, RED, WHITE, SLOT_SIZE, INVENTORY_SLOTS, \
     FIELD_HEIGHT, FIELD_WIDTH, FPS, GRAY
 import Constants
@@ -46,20 +45,25 @@ class Battle:
     def __init__(self, hero):
         self.hero = hero
         self.mobs = pygame.sprite.Group()
-        self.needles = pygame.sprite.Group()
-        self.fireballs = pygame.sprite.Group()
+        self.group_weapon = pygame.sprite.Group()
+        self.weapon = self.hero.weapon
         self.all_sprites = pygame.sprite.Group(self.hero)
         self.ui = Interface()
         self.spawn_timer = 0
+        self.reload = self.weapon.reload
+        self.reload_timer = 0
         self.game_over = False
 
-        self.breastplate = Breastplate(self.hero)
-        self.all_sprites.add(self.breastplate)
-        self.breastplate.upgrade_armor(self.ui)
+        for item in self.hero.inventory:
+            self.all_sprites.add(item)
+            item.upgrade_armor(self.ui)
 
-        self.boots = Boots(self.hero)
-        self.all_sprites.add(self.boots)
-        self.boots.upgrade_armor(self.ui)
+    def spawn_weapon(self):
+        if Constants.PLAYER_WEAPON != 2:
+            weapon = self.weapon(self.group_weapon, self.hero.rect.center, self.mobs)
+        else:
+            weapon = self.weapon(self.group_weapon, self.hero.rect.center)
+        self.all_sprites.add(weapon)
 
     def spawn_mob(self):
         if not self.game_over:
@@ -68,11 +72,6 @@ class Battle:
             mob = Creatures.Mob(x, y)
             self.mobs.add(mob)
             self.all_sprites.add(mob)
-
-    def spawn_fireball(self):
-        if not self.game_over:
-            fireball = Fireball(self.fireballs, self.hero.rect.center, self.mobs)
-            self.all_sprites.add(fireball)
 
     def check_collisions(self):
         for mob in self.mobs.copy():
@@ -90,18 +89,18 @@ class Battle:
     def update_all(self):
         if not self.game_over:
             self.hero.update()
-            self.breastplate.update(self.hero)
-            self.boots.update(self.hero)
             self.mobs.update(self.hero)
-            self.needles.update(self.mobs)
-            self.fireballs.update(self.mobs)
+            self.group_weapon.update(self.mobs)
             self.check_collisions()
 
             self.spawn_timer += 1
+            self.reload_timer += 1
             if self.spawn_timer > FPS * 2:
                 self.spawn_mob()
-                self.spawn_fireball()
                 self.spawn_timer = 0
+            if self.reload_timer > self.reload:
+                self.spawn_weapon()
+                self.reload_timer = 0
 
     def draw_all(self, screen):
         screen.blit(Constants.BACKGROUND_IMAGE, (0, 0))

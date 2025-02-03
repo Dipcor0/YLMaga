@@ -1,111 +1,8 @@
 import pygame
 import Constants
+import Equipment
 from Constants import UI_HEIGHT, PLAYER_SPEED_MOVE, PLAYER_HP, PLAYER_ARMOR, RED, WHITE, SLOT_SIZE, INVENTORY_SLOTS, \
     FIELD_HEIGHT, FIELD_WIDTH, FPS, GRAY
-
-
-class Creature(pygame.sprite.Sprite):
-    def __init__(self, group, image, pos):
-        super().__init__(group)
-        self.image = image
-        self.rect = self.image.get_rect()
-        self.rect.x = pos[0]
-        self.rect.y = pos[1]
-
-    def update(self, event=None, tick=None):
-        pass
-
-    def draw(self, screen):
-        pass
-
-
-class Boss(Creature):
-    def __init__(self, group, image, pos):
-        super().__init__(group, image, pos)
-
-
-# пример противника
-class Enemy(Creature):
-    def __init__(self, group, image, pos):
-        super().__init__(group, image, pos)
-        self.money = 52
-        self.exp = 52
-        self.hp = 1000
-
-    def get_damage(self, hit: int):
-        self.hp -= hit
-        if self.hp <= 0:
-            self.kill()
-
-    def kill(self):
-        # что-то, чтобы противник изчез с поля
-        return self.money, self.exp
-
-
-# class Hero(Creature):
-#     def __init__(self):
-#         super().__init__(Constants.GROUP_PLAYER, Constants.PLAYER_IMAGE, (0, 0))
-#         self.speed = Constants.PLAYER_SPEED_MOVE
-#         self.can_move = True
-#         self.rect.x = 500  # куча данных персонажа. От сюда
-#         self.rect.y = 500
-#         self.level = Constants.PLAYER_LEVEL
-#         self.hp = Constants.PLAYER_HP
-#         self.regen = Constants.PLAYER_REGEN
-#         self.hit = Constants.PLAYER_HIT
-#         self.chane_crit = Constants.PLAYER_CHANCE_CRIT
-#         self.koef_krit = Constants.PLAYER_KOEF_CRIT
-#         self.armor = Constants.PLAYER_ARMOR
-#         self.chance_avoidence = Constants.PLAYER_CHANCE_AVOIDANCE  # До сюда
-#         self.inventory = []
-#         self.armor_sprite = None  # Добавляем атрибут для брони
-#
-#     def update(self, event=None, tick=None):
-#         if self.can_move:
-#             keys = pygame.key.get_pressed()
-#             if keys[pygame.K_w] and self.rect.top > 0:
-#                 self.rect.y -= self.speed
-#             if keys[pygame.K_s] and self.rect.bottom < Constants.SIZE_SCREEN[1]:
-#                 self.rect.y += self.speed
-#             if keys[pygame.K_a] and self.rect.left > 0:
-#                 self.rect.x -= self.speed
-#             if keys[pygame.K_d] and self.rect.right < Constants.SIZE_SCREEN[0]:
-#                 self.rect.x += self.speed
-#
-#     def move(self, dx, dy):  # изменение координаты во время движения
-#         self.rect = self.rect.move(dx, dy)
-#
-#     def get_coords(self):
-#         return [self.rect.x, self.rect.y]
-#
-#     def get_hp(self):
-#         return self.hp
-#
-#     def get_armor(self):
-#         return self.armor
-#
-#     def get_inventory(self):
-#         return self.inventory
-#
-#     def block_move(self):
-#         self.can_move = not self.can_move
-#
-#     def block_right(self):
-#         pass
-#
-#     def block_left(self):
-#         pass
-#
-#     def block_up(self):
-#         pass
-#
-#     def block_down(self):
-#         pass
-#
-#     def upgrade_characteristics(self, armor):
-#         if armor:
-#             armor.upgrade_armor(self)
-
 
 '''
 TODO: Сделать csv файл, в котором будут хранится данные о всех оружиях и снаряжении. 
@@ -125,6 +22,10 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (FIELD_WIDTH // 2, FIELD_HEIGHT // 2)
         self.speed = PLAYER_SPEED_MOVE
+        self.weapon = None
+        self.load_weapon()
+        self.inventory = []
+        self.load_inventory()
 
     def update(self):
         keys = pygame.key.get_pressed()
@@ -137,11 +38,15 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_d] and self.rect.right < FIELD_WIDTH:
             self.rect.x += self.speed
 
-    def upgrade_characteristics(self, armor, boots):
-        if armor:
-            armor.upgrade_armor(self)
-        if boots:
-            boots.upgrade_armor(self)
+        for item in self.inventory:
+            item.update(self)
+
+    def load_inventory(self):
+        for index in Constants.PLAYER_EQUIPMENT:
+            self.inventory.append(Equipment.get_equipment(index)(self))
+
+    def load_weapon(self):
+        self.weapon = Equipment.get_weapon(Constants.PLAYER_WEAPON)
 
 
 class Mob(pygame.sprite.Sprite):

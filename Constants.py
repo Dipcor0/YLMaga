@@ -19,18 +19,13 @@ GRAY = (100, 100, 100)
 MONEY = 0
 CRISTALLS = 0
 
-
 # PLAYER
 PLAYER_LEVEL = 1
 PLAYER_HP = 100
-PLAYER_REGEN = 1  # * t
-PLAYER_HIT = 10
 PLAYER_SPEED_MOVE = 5  # я затестил 52 чето не то, поэтому лучше 5
-PLAYER_CHANCE_CRIT = 0.1
-PLAYER_KOEF_CRIT = 1
 PLAYER_ARMOR = 50
-PLAYER_CHANCE_AVOIDANCE = 0.1
-PLAYER_WEAPON = 0  # сделаем базу данных из оружий
+PLAYER_WEAPON = 2  # индекс
+PLAYER_EQUIPMENT = [1]  # индексы(база индексов лежит в функции Equipment.get_equipment
 
 # Для инвентаря
 UI_HEIGHT = 200
