@@ -24,7 +24,7 @@ PLAYER_LEVEL = 1
 PLAYER_HP = 100
 PLAYER_SPEED_MOVE = 5  # я затестил 52 чето не то, поэтому лучше 5
 PLAYER_ARMOR = 50
-PLAYER_WEAPON = [0, 1, 2]  # индекс
+PLAYER_WEAPON = []  # индекс
 PLAYER_EQUIPMENT = []  # индексы(база индексов лежит в функции Equipment.get_equipment
 
 # Для инвентаря
@@ -47,7 +47,8 @@ CRYSTAL_IMAGE = None
 COIN_IMAGE = None
 MOB_IMAGE = None
 BACKGROUND_MARKET_IMAGE = None
-
+TELEPORT_FIGHT = None
+TELEPORT_FIGHT_ACTIVE = None
 
 def download_save():
     #  будем использовать базу данных SQL
@@ -61,7 +62,7 @@ def upload_save():
 
 def load_sprites():
     global PLAYER_IMAGE, BACKGROUND_IMAGE, HEART_IMAGE, \
-        ARMOR_IMAGE, CRYSTAL_IMAGE, COIN_IMAGE, MOB_IMAGE, BACKGROUND_MARKET_IMAGE
+        ARMOR_IMAGE, CRYSTAL_IMAGE, COIN_IMAGE, MOB_IMAGE, BACKGROUND_MARKET_IMAGE, TELEPORT_FIGHT, TELEPORT_FIGHT_ACTIVE
 
     def load_image(road, name, ):
         fullname = os.path.join(road, name)
@@ -89,3 +90,12 @@ def load_sprites():
     MOB_IMAGE = load_image('Sprites/Creatures', 'моб.png')
     MOB_IMAGE = pygame.transform.scale(MOB_IMAGE, (60, 60))
     BACKGROUND_MARKET_IMAGE = load_image('Sprites/Creatures', 'ЗаднийФонМагазина.png')
+
+    TELEPORT_FIGHT = load_image('Sprites/Creatures', 'тп.png')
+    TELEPORT_FIGHT = pygame.transform.scale(TELEPORT_FIGHT, (TELEPORT_FIGHT.get_width() * 3.5,
+                                                             TELEPORT_FIGHT.get_height() * 3.5))
+    TELEPORT_FIGHT_ACTIVE = load_image('Sprites/Creatures', 'тп актив.png')
+    TELEPORT_FIGHT_ACTIVE = pygame.transform.scale(TELEPORT_FIGHT_ACTIVE, (TELEPORT_FIGHT_ACTIVE.get_width() * 3.5,
+                                                             TELEPORT_FIGHT_ACTIVE.get_height() * 3.5))
+
+
