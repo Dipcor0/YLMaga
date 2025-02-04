@@ -24,8 +24,8 @@ PLAYER_LEVEL = 1
 PLAYER_HP = 100
 PLAYER_SPEED_MOVE = 5  # я затестил 52 чето не то, поэтому лучше 5
 PLAYER_ARMOR = 50
-PLAYER_WEAPON = 2  # индекс
-PLAYER_EQUIPMENT = [1]  # индексы(база индексов лежит в функции Equipment.get_equipment
+PLAYER_WEAPON = [0, 1, 2]  # индекс
+PLAYER_EQUIPMENT = []  # индексы(база индексов лежит в функции Equipment.get_equipment
 
 # Для инвентаря
 UI_HEIGHT = 200

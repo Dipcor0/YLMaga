@@ -39,31 +39,38 @@ class Interface:
             slot_y = FIELD_HEIGHT + 10
             pygame.draw.rect(surface, GRAY, (slot_x, slot_y, slot_size, slot_size), 2)
 
+    def reboot(self):
+        self.hp = PLAYER_HP
+        self.armor = PLAYER_ARMOR
+        self.exp = 0
+        self.coins = 0
+        self.crystals = 0
+
 
 # Битва
 class Battle:
     def __init__(self, hero):
         self.hero = hero
         self.mobs = pygame.sprite.Group()
-        self.group_weapon = pygame.sprite.Group()
-        self.weapon = self.hero.weapon
         self.all_sprites = pygame.sprite.Group(self.hero)
         self.ui = Interface()
         self.spawn_timer = 0
-        self.reload = self.weapon.reload
-        self.reload_timer = 0
         self.game_over = False
+
+        self.group_weapon = pygame.sprite.Group()
+        self.weapons = self.hero.weapons
 
         for item in self.hero.inventory:
             self.all_sprites.add(item)
             item.upgrade_armor(self.ui)
 
-    def spawn_weapon(self):
-        if Constants.PLAYER_WEAPON != 2:
-            weapon = self.weapon(self.group_weapon, self.hero.rect.center, self.mobs)
+    def spawn_weapon(self, weapon):
+        wep, index = weapon
+        if index != 2:
+            res_weapon = wep(self.group_weapon, self.hero.rect.center, self.mobs)
         else:
-            weapon = self.weapon(self.group_weapon, self.hero.rect.center)
-        self.all_sprites.add(weapon)
+            res_weapon = wep(self.group_weapon, self.hero.rect.center)
+        self.all_sprites.add(res_weapon)
 
     def spawn_mob(self):
         if not self.game_over:
@@ -94,13 +101,15 @@ class Battle:
             self.check_collisions()
 
             self.spawn_timer += 1
-            self.reload_timer += 1
             if self.spawn_timer > FPS * 2:
                 self.spawn_mob()
                 self.spawn_timer = 0
-            if self.reload_timer > self.reload:
-                self.spawn_weapon()
-                self.reload_timer = 0
+            for key in self.weapons.keys():
+                if self.weapons[key][0] == self.weapons[key][1]:
+                    self.spawn_weapon(key)
+                    self.weapons[key][1] = 0
+                else:
+                    self.weapons[key][1] += 1
 
     def draw_all(self, screen):
         screen.blit(Constants.BACKGROUND_IMAGE, (0, 0))
@@ -111,3 +120,16 @@ class Battle:
         if self.game_over:
             game_over_text = self.ui.font.render("GAME OVER. PRESS ESC", True, RED)
             screen.blit(game_over_text, (FIELD_WIDTH // 2 - 100, FIELD_HEIGHT // 2 - 50))
+
+    def reboot(self):
+        self.all_sprites.empty()
+        self.all_sprites.add(self.hero)
+        self.mobs.empty()
+        self.group_weapon.empty()
+        self.weapons = self.hero.weapons
+        self.ui.reboot()
+        self.spawn_timer = 0
+
+        for item in self.hero.inventory:
+            self.all_sprites.add(item)
+            item.upgrade_armor(self.ui)

@@ -13,8 +13,8 @@ class Needles(pygame.sprite.Sprite):
         super().__init__(group)
         self.image = needle_image  # Загруженное изображение иглы
         self.rect = self.image.get_rect(center=pos_hero)
-        self.speed = 10
-        self.damage = 30
+        self.speed = 15
+        self.damage = 15
         self.direction = self.get_direction(enemies)
         self.hit_targets = set()  # Запоминаем, кого уже поразили
 
@@ -46,15 +46,15 @@ class Needles(pygame.sprite.Sprite):
 
 
 class Fireball(pygame.sprite.Sprite):
-    reload = FPS * 2
+    reload = FPS * 1.5
 
     def __init__(self, group, pos_hero, enemies):
         super().__init__(group)
         self.image = pygame.image.load("Sprites/Creatures/фаербол.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, (30, 30))  # Загружаем изображение
         self.rect = self.image.get_rect(center=pos_hero)
-        self.speed = 3  # Скорость чуть меньше, чем у иглы
-        self.damage = 100  # Урон
+        self.speed = 7  # Скорость чуть меньше, чем у иглы
+        self.damage = 50  # Урон
         self.direction = self.get_direction(enemies)
 
     def get_direction(self, enemies):

@@ -20,23 +20,36 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.image.load("Sprites/Creatures/персонаж.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, (90, 50))
         self.rect = self.image.get_rect()
-        self.rect.center = (FIELD_WIDTH // 2, FIELD_HEIGHT // 2)
+        self.rect.center = (Constants.SIZE_SCREEN[0] // 2 - self.image.get_width() // 2,
+                            Constants.SIZE_SCREEN[1] // 2 - self.image.get_height() // 2)
         self.speed = PLAYER_SPEED_MOVE
-        self.weapon = None
+        self.weapons = {}
         self.load_weapon()
         self.inventory = []
         self.load_inventory()
 
-    def update(self):
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_w] and self.rect.top > 0:
-            self.rect.y -= self.speed
-        if keys[pygame.K_s] and self.rect.bottom < FIELD_HEIGHT:
-            self.rect.y += self.speed
-        if keys[pygame.K_a] and self.rect.left > 0:
-            self.rect.x -= self.speed
-        if keys[pygame.K_d] and self.rect.right < FIELD_WIDTH:
-            self.rect.x += self.speed
+    def update(self, scene=None):
+        if not scene:
+            print(3)
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_w] and self.rect.top > 0:
+                self.rect.y -= self.speed
+            if keys[pygame.K_s] and self.rect.bottom < FIELD_HEIGHT:
+                self.rect.y += self.speed
+            if keys[pygame.K_a] and self.rect.left > 0:
+                self.rect.x -= self.speed
+            if keys[pygame.K_d] and self.rect.right < FIELD_WIDTH:
+                self.rect.x += self.speed
+        elif scene == 1:
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_w] and self.rect.top > 0:
+                self.rect.y -= self.speed
+            if keys[pygame.K_s] and self.rect.bottom < Constants.SIZE_SCREEN[1]:
+                self.rect.y += self.speed
+            if keys[pygame.K_a] and self.rect.left > 0:
+                self.rect.x -= self.speed
+            if keys[pygame.K_d] and self.rect.right < Constants.SIZE_SCREEN[0]:
+                self.rect.x += self.speed
 
         for item in self.inventory:
             item.update(self)
@@ -46,7 +59,9 @@ class Player(pygame.sprite.Sprite):
             self.inventory.append(Equipment.get_equipment(index)(self))
 
     def load_weapon(self):
-        self.weapon = Equipment.get_weapon(Constants.PLAYER_WEAPON)
+        for index in Constants.PLAYER_WEAPON:
+            weapon = Equipment.get_weapon(index)
+            self.weapons[(weapon, index)] = [weapon.reload, 0]  # оружие: кд, таймер
 
 
 class Mob(pygame.sprite.Sprite):
