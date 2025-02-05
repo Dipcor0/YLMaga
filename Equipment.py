@@ -1,7 +1,7 @@
 import pygame
 from pygame import mixer
 import math
-from Constants import FIELD_WIDTH, FIELD_HEIGHT, PLAYER_EQUIPMENT, FPS, WELM_SCREAM
+from Constants import FIELD_WIDTH, FIELD_HEIGHT, PLAYER_EQUIPMENT, FPS, WELM_SCREAM, FIREBALL_SPAWN_SOUND, CORONA_VIRUS, NEEDLE_SWISH_SOUND
 
 needle_image = pygame.image.load("Sprites/Creatures/needle_image.png").convert_alpha()
 needle_image = pygame.transform.scale(needle_image, (30, 30))
@@ -19,6 +19,8 @@ class Needles(pygame.sprite.Sprite):
         self.damage = 15
         self.direction = self.get_direction(enemies)
         self.hit_targets = set()  # Запоминаем, кого уже поразили
+
+        NEEDLE_SWISH_SOUND.play()
 
     def get_direction(self, enemies):
         if enemies:
@@ -59,6 +61,8 @@ class Fireball(pygame.sprite.Sprite):
         self.speed = 7  # Скорость чуть меньше, чем у иглы
         self.damage = 50  # Урон
         self.direction = self.get_direction(enemies)
+
+        FIREBALL_SPAWN_SOUND.play()
 
     def get_direction(self, enemies):
         if enemies:
@@ -107,6 +111,8 @@ class SocialDistance(pygame.sprite.Sprite):
         self.live_timer = 0
         self.timer_damage = FPS // 3
         self.mobs_damaged = {}
+
+        CORONA_VIRUS.play()
 
     def update(self, enemies):
         self.live_timer += 1

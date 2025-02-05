@@ -65,6 +65,5 @@ class Controller:
             pygame.display.flip()
             self.clock.tick(FPS)
 
-
 with Controller() as game:
     game.run()
