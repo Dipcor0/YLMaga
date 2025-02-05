@@ -104,7 +104,6 @@ class Battle:
                     self.game_over = True
 
             if mob.hp <= 0:
-                # WELM_SOUND.play()
                 mob.kill()  # Удаляем моба, если его здоровье <= 0
 
     def update_all(self):
