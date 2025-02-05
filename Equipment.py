@@ -39,7 +39,7 @@ class Needles(pygame.sprite.Sprite):
                 enemy.hp -= self.damage  # Наносим урон
                 self.hit_targets.add(enemy)  # Запоминаем, что уже нанесли урон
                 if enemy.hp <= 0:
-                    # WELM_SOUND.play()
+                    #  WELM_SOUND.play()
                     enemy.kill()  # Удаляем моба после смерти
 
         # Удаляем иглу, если она выходит за границы экрана
