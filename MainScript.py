@@ -1,4 +1,5 @@
 import pygame
+from pygame import mixer
 from Equipment import *
 from Creatures import Player
 from Market import Shop
@@ -6,6 +7,7 @@ from BattleField import Battle
 from Constants import SIZE_SCREEN, load_sprites, FPS
 
 active_scene = 0
+mixer.init()
 
 
 class Controller:
@@ -18,6 +20,9 @@ class Controller:
         self.active_scene = active_scene
         self.scenes = {0: Shop(self.hero),
                        1: Battle(self.hero)}
+
+        mixer.music.load("Music/menu_music.ogg")
+        mixer.music.play(-1)
 
         self.running = True
         self.clock = pygame.time.Clock()
@@ -42,12 +47,18 @@ class Controller:
                             self.hero.rect.y = SIZE_SCREEN[1] // 2 - self.hero.image.get_height() // 2
                             self.scenes[self.active_scene].reboot()
 
+                            mixer.music.load("Music/Gigaphonk.ogg")
+                            mixer.music.play(-1)
+
             elif self.active_scene == 1:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                         self.active_scene = 0
                         self.hero.rect.x = SIZE_SCREEN[0] // 2 - self.hero.image.get_width() // 2
                         self.hero.rect.y = SIZE_SCREEN[1] // 2 - self.hero.image.get_height() // 2
+
+                        mixer.music.load("Music/menu_music.ogg")
+                        mixer.music.play(-1)
 
             scene.update_all()
             scene.draw_all(self.screen)
