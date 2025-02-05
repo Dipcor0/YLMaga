@@ -1,12 +1,10 @@
 import pygame
-from pygame import mixer
 import math
 from Constants import FIELD_WIDTH, FIELD_HEIGHT, PLAYER_EQUIPMENT, FPS
 
 needle_image = pygame.image.load("Sprites/Creatures/needle_image.png").convert_alpha()
 needle_image = pygame.transform.scale(needle_image, (30, 30))
 
-mixer.init()
 
 class Needles(pygame.sprite.Sprite):
     reload = FPS * 2 // 3
@@ -39,7 +37,6 @@ class Needles(pygame.sprite.Sprite):
                 enemy.hp -= self.damage  # Наносим урон
                 self.hit_targets.add(enemy)  # Запоминаем, что уже нанесли урон
                 if enemy.hp <= 0:
-                    #  WELM_SOUND.play()
                     enemy.kill()  # Удаляем моба после смерти
 
         # Удаляем иглу, если она выходит за границы экрана
@@ -78,7 +75,6 @@ class Fireball(pygame.sprite.Sprite):
             if self.rect.colliderect(enemy.rect):
                 enemy.hp -= self.damage  # Наносим урон
                 if enemy.hp <= 0:
-                    # WELM_SOUND.play()
                     enemy.kill()  # Удаляем моба после смерти
                 self.kill()  # Удаляем фаербол после первого попадания
                 return
@@ -125,7 +121,6 @@ class SocialDistance(pygame.sprite.Sprite):
                     self.mobs_damaged[enemy] = 0
                     enemy.hp -= self.damage
             if enemy.hp <= 0:
-                # WELM_SOUND.play()
                 enemy.kill()
 
 

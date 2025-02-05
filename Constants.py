@@ -1,6 +1,9 @@
 import pygame
+from pygame import mixer
 import os
 import sys
+
+mixer.init()
 
 # SIZE
 SIZE_SCREEN = (1920, 1080)
@@ -55,10 +58,8 @@ def download_save():
     pass
 
 
-def upload_save():
-    #  будем использовать базу данных SQL
-    pass
-
+# Music/Sound
+WELM_SCREAM = mixer.Sound("Music/Wilhelm4.ogg")
 
 def load_sprites():
     global PLAYER_IMAGE, BACKGROUND_IMAGE, HEART_IMAGE, \
