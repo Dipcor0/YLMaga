@@ -1,10 +1,12 @@
 import pygame
+from pygame import mixer
 import random
 from Constants import UI_HEIGHT, PLAYER_SPEED_MOVE, PLAYER_HP, PLAYER_ARMOR, RED, WHITE, SLOT_SIZE, INVENTORY_SLOTS, \
-    FIELD_HEIGHT, FIELD_WIDTH, FPS, GRAY
+    FIELD_HEIGHT, FIELD_WIDTH, FPS, GRAY, WELM_SOUND
 import Constants
 import Creatures
 
+mixer.init()
 
 # Интерфейс
 class Interface:
@@ -91,6 +93,7 @@ class Battle:
                     self.game_over = True
 
             if mob.hp <= 0:
+                WELM_SOUND.play()
                 mob.kill()  # Удаляем моба, если его здоровье <= 0
 
     def update_all(self):
