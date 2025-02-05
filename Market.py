@@ -1,7 +1,6 @@
 import pygame
 
 import Constants
-import Constants
 from Constants import UI_HEIGHT, PLAYER_SPEED_MOVE, PLAYER_HP, PLAYER_ARMOR, RED, WHITE, SLOT_SIZE, INVENTORY_SLOTS, \
     FIELD_HEIGHT, FIELD_WIDTH, FPS, GRAY, SIZE_ZONE_STORE, SIZE_SCREEN
 
@@ -13,7 +12,8 @@ class Shop:
         self.hp = PLAYER_HP
         self.all_sprites = pygame.sprite.Group()
         self.all_sprites.add(self.hero)
-        self.fight = Fight((SIZE_SCREEN[0] // 2 - SIZE_ZONE_STORE[0] // 2, 0), self.hero, self.all_sprites)
+        self.fight = Fight((SIZE_SCREEN[0] // 2 - Constants.TELEPORT_FIGHT.get_width() // 2, 0), self.hero,
+                           self.all_sprites)
         self.store = Store((0, SIZE_SCREEN[1] // 4), self.hero, self.all_sprites)
         self.upgrade = Upgrade((SIZE_SCREEN[0] - SIZE_ZONE_STORE[0], SIZE_SCREEN[1] // 4), self.hero, self.all_sprites)
 
@@ -33,10 +33,10 @@ class Shop:
 
     def draw_all(self, screen):
         screen.blit(Constants.BACKGROUND_MARKET_IMAGE, (0, 0))
-        self.all_sprites.draw(screen)
         self.store.draw(screen)
         self.upgrade.draw(screen)
         self.fight.draw(screen)
+        self.all_sprites.draw(screen)
 
     def _change_scene(self, scene: int):
         pass
@@ -134,15 +134,14 @@ class Fight:
     def __init__(self, pos, hero, group_player):
         self.pos = pos
         self.group = group_player
+        self.activ = Constants.TELEPORT_FIGHT_ACTIVE
+        self.dis_activ = Constants.TELEPORT_FIGHT
         self.zone = pygame.sprite.Sprite()
-        self.zone.image = pygame.Surface(SIZE_ZONE_STORE)
-        self.zone.image.fill((0, 0, 0))
+        self.zone.image = self.dis_activ
         self.zone.rect = self.zone.image.get_rect()
-        self.zone.rect.x, self.zone.rect.y = pos
+        self.zone.rect.x, self.zone.rect.y = self.pos
         self.font = pygame.font.Font(None, 36)
         self.mes = self.font.render('E', True, WHITE)
-        self.hero = hero
-
         self.flag_set_fight = False
 
     def update(self, event=None):
@@ -153,13 +152,16 @@ class Fight:
         else:
             if pygame.sprite.spritecollideany(self.zone, self.group):
                 self.player_in_zone = True
+                self.zone.image = self.activ
 
             else:
                 self.player_in_zone = False
-        # TODO: дальше делать магазин :)
+                self.zone.image = self.dis_activ
 
     def draw(self, screen):
-        pygame.draw.rect(screen, pygame.Color('red'), (*self.pos, *SIZE_ZONE_STORE), width=1)
+        screen.blit(self.zone.image, self.zone.rect)
 
         if self.player_in_zone:
-            screen.blit(self.mes, (self.pos[0] + SIZE_ZONE_STORE[0] // 2, self.pos[1] + SIZE_ZONE_STORE[1] // 2))
+            screen.blit(self.mes, (
+                self.pos[0] + self.zone.image.get_width() // 2 - 8,
+                self.pos[1] + self.zone.image.get_height() // 2 - 8))

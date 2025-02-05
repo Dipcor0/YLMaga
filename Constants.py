@@ -1,9 +1,7 @@
 import pygame
-from pygame import mixer
 import os
 import sys
 
-mixer.init()
 # SIZE
 SIZE_SCREEN = (1920, 1080)
 SIZE_ZONE_STORE = 450, 450
@@ -50,9 +48,10 @@ COIN_IMAGE = None
 MOB_IMAGE = None
 BACKGROUND_MARKET_IMAGE = None
 
-# Music/Sound
-WELM_SOUND = mixer.Sound("Music/Wilhelm4.ogg")
 
+def download_save():
+    #  будем использовать базу данных SQL
+    pass
 
 
 def upload_save():
