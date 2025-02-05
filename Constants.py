@@ -62,7 +62,7 @@ def download_save():
 WELM_SCREAM = mixer.Sound("Music/Wilhelm4.ogg")
 FIREBALL_SPAWN_SOUND = mixer.Sound("Music/fireball_cast.ogg")
 NEEDLE_SWISH_SOUND = mixer.Sound("Music/needle_cast.ogg")
-CORONA_VIRUS = mixer.Sound("Music")
+CORONA_VIRUS = mixer.Sound("Music/corona_virus.ogg")
 
 def load_sprites():
     global PLAYER_IMAGE, BACKGROUND_IMAGE, HEART_IMAGE, \
