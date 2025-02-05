@@ -87,6 +87,9 @@ def load_sprites():
     ARMOR_IMAGE = load_image('Sprites/Creatures', 'броня.png')
     ARMOR_IMAGE = pygame.transform.scale(ARMOR_IMAGE, (30, 30))
 
+    BOAR_IMAGE = load_image('Sprites/Creatures', 'boar.png')
+    BOAR_IMAGE = pygame.transform.scale(BOAR_IMAGE, (70, 70))
+
     CRYSTAL_IMAGE = load_image('Sprites/Creatures', 'кристалик.png')
     CRYSTAL_IMAGE = pygame.transform.scale(CRYSTAL_IMAGE, (30, 30))
     COIN_IMAGE = load_image('Sprites/Creatures', 'монетка.png')

@@ -54,10 +54,12 @@ class Battle:
     def __init__(self, hero):
         self.hero = hero
         self.mobs = pygame.sprite.Group()
+        self.boars = pygame.sprite.Group()
         self.all_sprites = pygame.sprite.Group(self.hero)
         self.ui = Interface()
         self.spawn_timer = 0
         self.game_over = False
+        self.kill_count = 0
 
         self.group_weapon = pygame.sprite.Group()
         self.weapons = self.hero.weapons
@@ -82,6 +84,15 @@ class Battle:
             self.mobs.add(mob)
             self.all_sprites.add(mob)
 
+    def spawn_boar(self):
+        if not self.game_over and self.kill_count >= 10:  # Спавнится после 10 убийств
+            x = random.randint(0, FIELD_WIDTH)
+            y = random.randint(0, FIELD_HEIGHT)
+            boar = Creatures.Boar(x, y)
+            self.boars.add(boar)
+            self.all_sprites.add(boar)
+            self.kill_count = 0  # Сбрасываем счетчик убийств
+
     def check_collisions(self):
         for mob in self.mobs.copy():
             if self.hero.rect.colliderect(mob.rect) and mob.can_attack():
@@ -100,6 +111,7 @@ class Battle:
         if not self.game_over:
             self.hero.update()
             self.mobs.update(self.hero)
+            self.boars.update(self.hero)
             self.group_weapon.update(self.mobs)
             self.check_collisions()
 

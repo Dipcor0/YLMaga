@@ -91,3 +91,33 @@ class Mob(pygame.sprite.Sprite):
             self.rect.y += self.speed
         if self.rect.y > target.rect.y:
             self.rect.y -= self.speed
+
+
+class Boar(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = Constants.BOAR_IMAGE  # Добавь изображение кабана в Constants
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        self.speed = 1  # Медленнее обычного моба
+        self.attack_cooldown = 1500  # Дольше между атаками
+        self.last_attack_time = pygame.time.get_ticks()
+        self.hp = 200  # Увеличенное здоровье
+        self.damage = 20  # Более сильная атака
+
+    def can_attack(self):
+        now = pygame.time.get_ticks()
+        if now - self.last_attack_time >= self.attack_cooldown:
+            self.last_attack_time = now
+            return True
+        return False
+
+    def update(self, target):
+        if self.rect.x < target.rect.x:
+            self.rect.x += self.speed
+        if self.rect.x > target.rect.x:
+            self.rect.x -= self.speed
+        if self.rect.y < target.rect.y:
+            self.rect.y += self.speed
+        if self.rect.y > target.rect.y:
+            self.rect.y -= self.speed
