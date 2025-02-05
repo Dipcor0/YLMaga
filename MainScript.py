@@ -49,6 +49,7 @@ class Controller:
                         self.hero.rect.x = SIZE_SCREEN[0] // 2 - self.hero.image.get_width() // 2
                         self.hero.rect.y = SIZE_SCREEN[1] // 2 - self.hero.image.get_height() // 2
 
+
             scene.update_all()
             scene.draw_all(self.screen)
             pygame.display.flip()
