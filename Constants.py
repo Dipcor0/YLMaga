@@ -27,7 +27,7 @@ PLAYER_LEVEL = 1
 PLAYER_HP = 100
 PLAYER_SPEED_MOVE = 5  # я затестил 52 чето не то, поэтому лучше 5
 PLAYER_ARMOR = 50
-PLAYER_WEAPON = [0]  # индекс
+PLAYER_WEAPON = [2]  # индекс
 PLAYER_EQUIPMENT = [0]  # индексы(база индексов лежит в функции Equipment.get_equipment
 
 # Для инвентаря
@@ -62,7 +62,7 @@ def download_save():
 WELM_SCREAM = mixer.Sound("Music/Wilhelm4.ogg")
 FIREBALL_SPAWN_SOUND = mixer.Sound("Music/fireball_cast.ogg")
 NEEDLE_SWISH_SOUND = mixer.Sound("Music/needle_cast.ogg")
-CORONA_VIRUS = mixer.Sound("Music/corona_virus.ogg")
+CORONA_VIRUS = mixer.Sound("Music/coronavirus.ogg")
 
 def load_sprites():
     global PLAYER_IMAGE, BACKGROUND_IMAGE, HEART_IMAGE, \
