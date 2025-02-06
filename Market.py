@@ -29,7 +29,8 @@ class Shop:
             item.upgrade_armor(self)
 
     def update_all(self, event=None, tick=None):
-        self.hero.update(1)
+        if event is None:
+            self.hero.update(1)
         self.store.update(event)
         self.upgrade.update(event)
         self.fight.update(event)
@@ -39,12 +40,12 @@ class Shop:
 
     def draw_all(self, screen):
         screen.blit(Constants.BACKGROUND_MARKET_IMAGE, (0, 0))
-
-        self.store.draw(screen)
-        self.upgrade.draw(screen)
         self.fight.draw(screen)
 
         self.all_sprites.draw(screen)
+
+        self.store.draw(screen)
+        self.upgrade.draw(screen)
 
         self.upgrade.draw_window(screen)
         self.store.draw_window(screen)
@@ -326,4 +327,3 @@ class Button:
     def not_buying(self):
         self.buying = False
         self.color = DARK_DARK_BLUE
-print()
