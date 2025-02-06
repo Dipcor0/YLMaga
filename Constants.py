@@ -35,7 +35,7 @@ PLAYER_WEAPON = []  # индекс
 PLAYER_EQUIPMENT = []  # индексы(база индексов лежит в функции Equipment.get_equipment
 
 ALL_WEAPON = []
-ALL_EQUIPMENT = [0]
+ALL_EQUIPMENT = []
 
 # Для инвентаря
 UI_HEIGHT = 200

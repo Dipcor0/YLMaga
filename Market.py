@@ -6,12 +6,15 @@ from Constants import UI_HEIGHT, PLAYER_SPEED_MOVE, PLAYER_HP, PLAYER_ARMOR, RED
     LIGHT_BLUE, BLACK
 
 
-def update_inventory(all, hero):
-    pass
+def update_inventory(all_sp, hero):
+    all_sp.empty()
+    all_sp.add(hero)
+    hero.load_inventory()
+    for item in hero.inventory:
+        all_sp.add(item)
 
 
 class Shop:
-
     def __init__(self, hero):
         self.font = pygame.font.Font(None, 36)
 
@@ -21,21 +24,18 @@ class Shop:
         self.hp = PLAYER_HP
 
         self.all_sprites = pygame.sprite.Group()
-        self.all_sprites.add(self.hero)
+        #self.all_sprites.add(self.hero)
         self.fight = Fight((SIZE_SCREEN[0] // 2 - Constants.TELEPORT_FIGHT.get_width() // 2, 0), self.hero,
                            self.all_sprites)
         self.store = Store((0, SIZE_SCREEN[1] // 4), self.hero, self.all_sprites)
         self.upgrade = Upgrade((SIZE_SCREEN[0] - SIZE_ZONE_STORE[0], SIZE_SCREEN[1] // 4), self.hero, self.all_sprites)
 
         self.flag_fight = False
-        self.all_sprites.empty()
-        self.all_sprites.add(hero)
-
-        self.hero.load_inventory()
-        for item in self.hero.inventory:
-            self.all_sprites.add(item)
+        update_inventory(self.all_sprites, self.hero)
 
     def update_all(self, event=None, tick=None):
+        if len(self.all_sprites) - 1 != len(Constants.PLAYER_EQUIPMENT):
+            update_inventory(self.all_sprites, self.hero)
         if event is None:
             self.hero.update(1)
         self.store.update(event)
@@ -60,6 +60,9 @@ class Shop:
         text = self.font.render(f'GOLD: {Constants.MONEY} CRYSTALS: {Constants.CRYSTALS}', True, DARK_BLUE)
         pygame.draw.rect(screen, BLUE, (0, 0, text.get_width(), text.get_height()))
         screen.blit(text, (0, 0))
+
+    def reboot(self):
+        update_inventory(self.all_sprites, self.hero)
 
 
 class Store:

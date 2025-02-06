@@ -57,7 +57,7 @@ class Controller:
                         self.active_scene = 0
                         self.hero.rect.x = SIZE_SCREEN[0] // 2 - self.hero.image.get_width() // 2
                         self.hero.rect.y = SIZE_SCREEN[1] // 2 - self.hero.image.get_height() // 2
-
+                        self.scenes[self.active_scene].reboot()
                         mixer.music.load("Music/menu_music.ogg")
                         mixer.music.play(-1)
 
