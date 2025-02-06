@@ -4,9 +4,9 @@ import os
 import sys
 
 mixer.init()
-
 # SIZE
-SIZE_SCREEN = (1920, 1080)
+screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+SIZE_SCREEN = screen.get_size()
 SIZE_ZONE_STORE = 450, 450
 SIZE_BOX = (180, 300)
 
@@ -129,4 +129,3 @@ def load_sprites():
     UPGRADE_MAGIC_HANDS_IMAGE = pygame.transform.scale(UPGRADE_MAGIC_HANDS_IMAGE,
                                                        (UPGRADE_MAGIC_HANDS_IMAGE.get_width() * 1.5,
                                                         UPGRADE_MAGIC_HANDS_IMAGE.get_height() * 1.5))
-
