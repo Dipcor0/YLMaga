@@ -13,6 +13,10 @@ fireball_image = pygame.transform.scale(fireball_image, (30, 30))  # Загру�
 mixer.init()
 
 
+def kill_mob():
+    WELM_SCREAM.play()
+
+
 class Needles(pygame.sprite.Sprite):
     reload = FPS * 2 // 3
     image = needle_image
@@ -48,7 +52,7 @@ class Needles(pygame.sprite.Sprite):
                 enemy.hp -= self.damage  # Наносим урон
                 self.hit_targets.add(enemy)  # Запоминаем, что уже нанесли урон
                 if enemy.hp <= 0:
-                    WELM_SCREAM.play()
+                    kill_mob()
                     enemy.kill()  # Удаляем моба после смерти
 
         # Удаляем иглу, если она выходит за границы экрана
@@ -89,7 +93,7 @@ class Fireball(pygame.sprite.Sprite):
             if self.rect.colliderect(enemy.rect):
                 enemy.hp -= self.damage  # Наносим урон
                 if enemy.hp <= 0:
-                    WELM_SCREAM.play()
+                    kill_mob()
                     enemy.kill()  # Удаляем моба после смерти
                 self.kill()  # Удаляем фаербол после первого попадания
                 return
@@ -139,7 +143,7 @@ class SocialDistance(pygame.sprite.Sprite):
                     self.mobs_damaged[enemy] = 0
                     enemy.hp -= self.damage
             if enemy.hp <= 0:
-                WELM_SCREAM.play()
+                kill_mob()
                 enemy.kill()
 
 
