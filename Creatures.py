@@ -4,6 +4,7 @@ import Equipment
 from Constants import UI_HEIGHT, PLAYER_SPEED_MOVE, PLAYER_HP, PLAYER_ARMOR, RED, WHITE, SLOT_SIZE, INVENTORY_SLOTS, \
     FIELD_HEIGHT, FIELD_WIDTH, FPS, GRAY
 
+
 '''
 TODO: Сделать csv файл, в котором будут хранится данные о всех оружиях и снаряжении. 
 В снаряжении будет колонка name - имя снаряжения, use_now - в инвентаре ли снаряга (значения 0/1), 

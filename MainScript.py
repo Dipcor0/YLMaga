@@ -1,5 +1,7 @@
 import pygame
 from pygame import mixer
+
+import Constants
 from Equipment import *
 from Creatures import Player
 from Market import Shop
@@ -14,6 +16,7 @@ class Controller:
     def __enter__(self):
         pygame.init()
         self.screen = pygame.display.set_mode(SIZE_SCREEN, pygame.FULLSCREEN)
+        Constants.download_save()
         load_sprites()
 
         self.hero = Player()
@@ -29,6 +32,7 @@ class Controller:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        Constants.save()
         pygame.quit()
 
     def run(self):

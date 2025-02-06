@@ -2,6 +2,7 @@ import pygame
 from pygame import mixer
 import os
 import sys
+import csv
 
 mixer.init()
 # SIZE
@@ -23,8 +24,8 @@ LIGHT_BLUE = (5, 209, 250)
 GRAY = (100, 100, 100)
 
 # OTHER
-MONEY = 1000
-CRYSTALS = 1488
+MONEY = 0
+CRYSTALS = 0
 
 # PLAYER
 PLAYER_LEVEL = 1
@@ -67,8 +68,36 @@ BOAR_IMAGE = None
 
 
 def download_save():
-    #  будем использовать базу данных SQL
-    pass
+    global MONEY, CRYSTALS, PLAYER_LEVEL, ALL_EQUIPMENT, ALL_WEAPON, PLAYER_EQUIPMENT, PLAYER_WEAPON
+    with open('save.csv', encoding="utf8") as csvfile:
+        reader = csv.DictReader(csvfile, delimiter=';')
+        res = list(reader)[0]
+        print(res)
+        PLAYER_LEVEL = int(res['PLAYER_LVL'])
+        MONEY = int(res['MONEY'])
+        CRYSTALS = int(res['CRYSTAL'])
+        if res['ALL_WEAP'] != '':
+            ALL_WEAPON = list(map(int, res['ALL_WEAP'].split(','))).copy()
+        if res['ALL_EQ'] != '':
+            ALL_EQUIPMENT = list(map(int, res['ALL_EQ'].split(','))).copy()
+
+        if res['ACT_EQ'] != '':
+            PLAYER_EQUIPMENT = list(map(int, res['ACT_EQ'].split(','))).copy()
+        if res['ACT_WEAP'] != '':
+            PLAYER_WEAPON = list(map(int, res['ACT_WEAP'].split(','))).copy()
+
+
+def save():
+    global MONEY, CRYSTAL, PLAYER_LEVEL, ALL_EQUIPMENT, ALL_WEAPON, PLAYER_EQUIPMENT, PLAYER_WEAPON
+    data = {'PLAYER_LVL': PLAYER_LEVEL, 'MONEY': MONEY, 'CRYSTAL': CRYSTAL,
+            'ALL_WEAP': ','.join(map(str, ALL_WEAPON)),
+            'ALL_EQ': ','.join(map(str, ALL_EQUIPMENT)),
+            'ACT_EQ': ','.join(map(str, PLAYER_EQUIPMENT)),
+            'ACT_WEAP': ','.join(map(str, PLAYER_WEAPON))}
+    with open('save.csv', 'w', encoding="utf8", newline='') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=list(data.keys()), delimiter=';')
+        writer.writeheader()
+        writer.writerow(data)
 
 
 # Music/Sound
