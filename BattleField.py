@@ -65,9 +65,7 @@ class Battle:
         self.group_weapon = pygame.sprite.Group()
         self.weapons = self.hero.weapons
 
-        for item in self.hero.inventory:
-            self.all_sprites.add(item)
-            item.upgrade_armor(self.ui)
+
 
     def spawn_weapon(self, weapon):
         wep, index = weapon
@@ -145,6 +143,7 @@ class Battle:
                     self.weapons[key][1] += 1
 
     def draw_all(self, screen):
+        print(Constants.PLAYER_EQUIPMENT, Constants.PLAYER_WEAPON)
         screen.blit(Constants.BACKGROUND_IMAGE, (0, 0))
         pygame.draw.rect(screen, WHITE, (0, 0, FIELD_WIDTH, FIELD_HEIGHT), 5)
         self.all_sprites.draw(screen)
@@ -165,7 +164,8 @@ class Battle:
         self.spawn_timer = 0
         self.boar_spawn_timer = 0
         self.hero.load_weapon()
-        print(self.hero.weapons)
+        self.hero.load_inventory()
+        self.game_over = False
 
         for item in self.hero.inventory:
             self.all_sprites.add(item)

@@ -41,7 +41,6 @@ class Controller:
                     if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                         self.running = False
                     elif event.type == pygame.KEYDOWN:
-
                         if scene.flag_fight is True:
                             scene.flag_fight = False
                             self.active_scene = 1

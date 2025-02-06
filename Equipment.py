@@ -10,6 +10,12 @@ needle_image = pygame.transform.scale(needle_image, (30, 30))
 fireball_image = pygame.image.load("Sprites/Creatures/фаербол.png").convert_alpha()
 fireball_image = pygame.transform.scale(fireball_image, (30, 30))  # Загружаем изображение
 
+breastplate_image = pygame.image.load("Sprites/Creatures/нагрудник.png").convert_alpha()
+breastplate_image = pygame.transform.scale(breastplate_image, (22, 22))  # Пример размера
+
+boots_image = pygame.image.load("Sprites/Creatures/ботинки.png").convert_alpha()
+boots_image = pygame.transform.scale(boots_image, (22, 22))
+
 mixer.init()
 
 
@@ -148,11 +154,12 @@ class SocialDistance(pygame.sprite.Sprite):
 
 
 class Breastplate(pygame.sprite.Sprite):
+    armor = 500
+    image = breastplate_image
+    name = 'Нагрудник'
+
     def __init__(self, hero):
         super().__init__()
-        self.armor = 500
-        self.image = pygame.image.load("Sprites/Creatures/нагрудник.png").convert_alpha()
-        self.image = pygame.transform.scale(self.image, (22, 22))  # Пример размера
         self.rect = self.image.get_rect()
         self.hero = hero
         self.rect.center = (self.hero.rect.centerx - 3, self.hero.rect.centery + 2)  # Example offset
@@ -165,11 +172,12 @@ class Breastplate(pygame.sprite.Sprite):
 
 
 class Boots(pygame.sprite.Sprite):
+    armor = 250
+    image = boots_image
+    name = 'Ботинки'
+
     def __init__(self, hero):
         super().__init__()
-        self.armor = 250
-        self.image = pygame.image.load("Sprites/Creatures/ботинки.png").convert_alpha()
-        self.image = pygame.transform.scale(self.image, (22, 22))
         self.rect = self.image.get_rect()
         self.hero = hero
         self.rect.center = (self.hero.rect.centerx - 3, self.hero.rect.centery + 15)
@@ -182,7 +190,7 @@ class Boots(pygame.sprite.Sprite):
 
 
 weapons = {0: Needles, 1: Fireball, 2: SocialDistance}
-items = {0: Breastplate, 1: Boots}
+equipments = {0: Breastplate, 1: Boots}
 
 
 def get_weapon(index):
@@ -190,10 +198,16 @@ def get_weapon(index):
 
 
 def get_equipment(index):
-    return items[index]
+    return equipments[index]
 
 
 def find_index_weapon(weapon):
     for k, v in weapons.items():
         if v == weapon:
+            return k
+
+
+def find_index_equipment(equipment):
+    for k, v in equipments.items():
+        if v == equipment:
             return k
