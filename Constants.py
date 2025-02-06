@@ -76,7 +76,7 @@ def download_save():
         print(res)
         PLAYER_LEVEL = int(res['PLAYER_LVL'])
         MONEY = int(res['MONEY'])
-        CRYSTALS = int(res['CRYSTAL'])
+        CRYSTALS = int(res['CRYSTALS'])
         if res['ALL_WEAP'] != '':
             ALL_WEAPON = list(map(int, res['ALL_WEAP'].split(','))).copy()
         if res['ALL_EQ'] != '':
@@ -89,8 +89,8 @@ def download_save():
 
 
 def save():
-    global MONEY, CRYSTAL, PLAYER_LEVEL, ALL_EQUIPMENT, ALL_WEAPON, PLAYER_EQUIPMENT, PLAYER_WEAPON
-    data = {'PLAYER_LVL': PLAYER_LEVEL, 'MONEY': MONEY, 'CRYSTAL': CRYSTAL,
+    global MONEY, CRYSTALS, PLAYER_LEVEL, ALL_EQUIPMENT, ALL_WEAPON, PLAYER_EQUIPMENT, PLAYER_WEAPON
+    data = {'PLAYER_LVL': PLAYER_LEVEL, 'MONEY': MONEY, 'CRYSTALS': CRYSTALS,
             'ALL_WEAP': ','.join(map(str, ALL_WEAPON)),
             'ALL_EQ': ','.join(map(str, ALL_EQUIPMENT)),
             'ACT_EQ': ','.join(map(str, PLAYER_EQUIPMENT)),
