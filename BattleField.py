@@ -58,6 +58,7 @@ class Battle:
         self.all_sprites = pygame.sprite.Group(self.hero)
         self.ui = Interface()
         self.spawn_timer = 0
+        self.boar_spawn_timer = 0
         self.game_over = False
         self.kill_count = 0
 
@@ -85,13 +86,12 @@ class Battle:
             self.all_sprites.add(mob)
 
     def spawn_boar(self):
-        if not self.game_over and self.kill_count >= 10:  # Спавнится после 10 убийств
+        if not self.game_over:
             x = random.randint(0, FIELD_WIDTH)
             y = random.randint(0, FIELD_HEIGHT)
             boar = Creatures.Boar(x, y)
             self.boars.add(boar)
             self.all_sprites.add(boar)
-            self.kill_count = 0  # Сбрасываем счетчик убийств
 
     def check_collisions(self):
         for mob in self.mobs.copy():
@@ -103,8 +103,20 @@ class Battle:
                 if self.ui.hp <= 0:
                     self.game_over = True
 
+            for boar in self.boars.copy():
+                if self.hero.rect.colliderect(boar.rect) and boar.can_attack():
+                    if self.ui.armor > 0:
+                        self.ui.armor -= boar.damage  # Урон от кабана
+                    else:
+                        self.ui.hp -= boar.damage
+                    if self.ui.hp <= 0:
+                        self.game_over = True
+
+                if boar.hp <= 0:
+                    boar.kill()
+
             if mob.hp <= 0:
-                mob.kill()  # Удаляем моба, если его здоровье <= 0
+                mob.kill()
 
     def update_all(self):
         if not self.game_over:
@@ -115,9 +127,16 @@ class Battle:
             self.check_collisions()
 
             self.spawn_timer += 1
+            self.boar_spawn_timer += 1
+
             if self.spawn_timer > FPS * 2:
                 self.spawn_mob()
                 self.spawn_timer = 0
+
+            if self.boar_spawn_timer > FPS * 7:
+                self.spawn_boar()
+                self.boar_spawn_timer = 0
+
             for key in self.weapons.keys():
                 if self.weapons[key][0] == self.weapons[key][1]:
                     self.spawn_weapon(key)
@@ -139,10 +158,12 @@ class Battle:
         self.all_sprites.empty()
         self.all_sprites.add(self.hero)
         self.mobs.empty()
+        self.boars.empty()
         self.group_weapon.empty()
         self.weapons = self.hero.weapons
         self.ui.reboot()
         self.spawn_timer = 0
+        self.boar_spawn_timer = 0
         self.hero.load_weapon()
         print(self.hero.weapons)
 
