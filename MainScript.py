@@ -36,10 +36,10 @@ class Controller:
             scene = self.scenes[self.active_scene]
             if self.active_scene == 0:
                 for event in pygame.event.get():
+                    scene.update_all(event)
                     if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                         self.running = False
                     elif event.type == pygame.KEYDOWN:
-                        scene.update_all(event)
                         if scene.flag_fight is True:
                             scene.flag_fight = False
                             self.active_scene = 1

@@ -1,22 +1,29 @@
 import pygame
 from pygame import mixer
 import math
-from Constants import FIELD_WIDTH, FIELD_HEIGHT, PLAYER_EQUIPMENT, FPS, WELM_SCREAM, FIREBALL_SPAWN_SOUND, CORONA_VIRUS, NEEDLE_SWISH_SOUND
+from Constants import FIELD_WIDTH, FIELD_HEIGHT, PLAYER_EQUIPMENT, FPS, WELM_SCREAM, FIREBALL_SPAWN_SOUND, CORONA_VIRUS, \
+    NEEDLE_SWISH_SOUND
 
 needle_image = pygame.image.load("Sprites/Creatures/needle_image.png").convert_alpha()
 needle_image = pygame.transform.scale(needle_image, (30, 30))
 
+fireball_image = pygame.image.load("Sprites/Creatures/фаербол.png").convert_alpha()
+fireball_image = pygame.transform.scale(fireball_image, (30, 30))  # Загружаем изображение
+
 mixer.init()
+
 
 class Needles(pygame.sprite.Sprite):
     reload = FPS * 2 // 3
+    image = needle_image
+    speed = 15
+    damage = 15
+    name = 'Шипы'
 
     def __init__(self, group, pos_hero, enemies):
         super().__init__(group)
-        self.image = needle_image  # Загруженное изображение иглы
+        #  self.image = self.image_wn  # Загруженное изображение иглы
         self.rect = self.image.get_rect(center=pos_hero)
-        self.speed = 15
-        self.damage = 15
         self.direction = self.get_direction(enemies)
         self.hit_targets = set()  # Запоминаем, кого уже поразили
 
@@ -52,14 +59,14 @@ class Needles(pygame.sprite.Sprite):
 
 class Fireball(pygame.sprite.Sprite):
     reload = FPS * 1.5
+    speed = 7  # Скорость чуть меньше, чем у иглы
+    damage = 50  # Урон
+    image = fireball_image
+    name = 'Фаербол'
 
     def __init__(self, group, pos_hero, enemies):
         super().__init__(group)
-        self.image = pygame.image.load("Sprites/Creatures/фаербол.png").convert_alpha()
-        self.image = pygame.transform.scale(self.image, (30, 30))  # Загружаем изображение
         self.rect = self.image.get_rect(center=pos_hero)
-        self.speed = 7  # Скорость чуть меньше, чем у иглы
-        self.damage = 50  # Урон
         self.direction = self.get_direction(enemies)
 
         FIREBALL_SPAWN_SOUND.play()
@@ -95,18 +102,19 @@ class Fireball(pygame.sprite.Sprite):
 
 class SocialDistance(pygame.sprite.Sprite):
     reload = FPS
+    damage = 10
+    radius = 100
+    image = pygame.Surface((radius * 2, radius * 2), pygame.SRCALPHA)
+    pygame.draw.circle(image, (207, 76, 0) + (128,), (radius, radius),
+                       radius)  # 128 - это уровень прозрачности
+    name = 'Соц. дистанция'
 
-    def __init__(self, group, pos_hero, radius=100, damage=10):
+    def __init__(self, group, pos_hero, ):
         super().__init__(group)
-        self.image = pygame.Surface((radius * 2, radius * 2), pygame.SRCALPHA)
-        pygame.draw.circle(self.image, (207, 76, 0) + (128,), (radius, radius),
-                           radius)  # 128 - это уровень прозрачности
         self.rect = self.image.get_rect()
-        self.rect.x, self.rect.y = pos_hero[0] - radius, pos_hero[1] - radius
+        self.rect.x, self.rect.y = pos_hero[0] - self.radius, pos_hero[1] - self.radius
         self.group = group
         # self.pos = pos_hero
-        self.radius = radius
-        self.damage = damage
         self.live = FPS * 3.5
         self.live_timer = 0
         self.timer_damage = FPS // 3
@@ -138,6 +146,7 @@ class SocialDistance(pygame.sprite.Sprite):
 class Breastplate(pygame.sprite.Sprite):
     def __init__(self, hero):
         super().__init__()
+        self.armor = 500
         self.image = pygame.image.load("Sprites/Creatures/нагрудник.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, (22, 22))  # Пример размера
         self.rect = self.image.get_rect()
@@ -148,12 +157,13 @@ class Breastplate(pygame.sprite.Sprite):
         self.rect.center = (hero.rect.centerx - 3, hero.rect.centery + 2)  # Example offset
 
     def upgrade_armor(self, hero):
-        hero.armor += 500
+        hero.armor += self.armor
 
 
 class Boots(pygame.sprite.Sprite):
     def __init__(self, hero):
         super().__init__()
+        self.armor = 250
         self.image = pygame.image.load("Sprites/Creatures/ботинки.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, (22, 22))
         self.rect = self.image.get_rect()
@@ -164,14 +174,22 @@ class Boots(pygame.sprite.Sprite):
         self.rect.center = (hero.rect.centerx - 3, hero.rect.centery + 15)
 
     def upgrade_armor(self, hero):
-        hero.armor += 250
+        hero.armor += self.armor
+
+
+weapons = {0: Needles, 1: Fireball, 2: SocialDistance}
+items = {0: Breastplate, 1: Boots}
 
 
 def get_weapon(index):
-    weapons = {0: Needles, 1: Fireball, 2: SocialDistance}
     return weapons[index]
 
 
 def get_equipment(index):
-    items = {0: Breastplate, 1: Boots}
     return items[index]
+
+
+def find_index_weapon(weapon):
+    for k, v in weapons.items():
+        if v == weapon:
+            return k

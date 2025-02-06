@@ -143,6 +143,8 @@ class Battle:
         self.weapons = self.hero.weapons
         self.ui.reboot()
         self.spawn_timer = 0
+        self.hero.load_weapon()
+        print(self.hero.weapons)
 
         for item in self.hero.inventory:
             self.all_sprites.add(item)
