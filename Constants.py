@@ -65,6 +65,7 @@ UPGRADE_MAGIC_HANDS_IMAGE = None
 NEEDLE_IMAGE = None
 FIREBALL_IMAGE = None
 BOAR_IMAGE = None
+SHOP_IMAGE = None
 
 
 def download_save():
@@ -111,7 +112,7 @@ def load_sprites():
     global PLAYER_IMAGE, BACKGROUND_IMAGE, HEART_IMAGE, \
         ARMOR_IMAGE, CRYSTAL_IMAGE, COIN_IMAGE, MOB_IMAGE, \
         BACKGROUND_MARKET_IMAGE, TELEPORT_FIGHT, TELEPORT_FIGHT_ACTIVE, \
-        UPGRADE_MAGIC_BALL_IMAGE, UPGRADE_MAGIC_HANDS_IMAGE, FIREBALL_IMAGE, NEEDLE_IMAGE, BOAR_IMAGE
+        UPGRADE_MAGIC_BALL_IMAGE, UPGRADE_MAGIC_HANDS_IMAGE, FIREBALL_IMAGE, NEEDLE_IMAGE, BOAR_IMAGE, SHOP_IMAGE
 
     def load_image(road, name, ):
         fullname = os.path.join(road, name)
@@ -159,3 +160,5 @@ def load_sprites():
     UPGRADE_MAGIC_HANDS_IMAGE = pygame.transform.scale(UPGRADE_MAGIC_HANDS_IMAGE,
                                                        (UPGRADE_MAGIC_HANDS_IMAGE.get_width() * 1.5,
                                                         UPGRADE_MAGIC_HANDS_IMAGE.get_height() * 1.5))
+
+    SHOP_IMAGE = load_image('Sprites/Creatures', 'shop_beta.png')

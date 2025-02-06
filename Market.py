@@ -19,12 +19,10 @@ class Shop:
         self.font = pygame.font.Font(None, 36)
 
         self.hero = hero
-
         self.armor = PLAYER_ARMOR
         self.hp = PLAYER_HP
 
         self.all_sprites = pygame.sprite.Group()
-        #self.all_sprites.add(self.hero)
         self.fight = Fight((SIZE_SCREEN[0] // 2 - Constants.TELEPORT_FIGHT.get_width() // 2, 0), self.hero,
                            self.all_sprites)
         self.store = Store((0, SIZE_SCREEN[1] // 4), self.hero, self.all_sprites)
@@ -74,8 +72,8 @@ class Store:
         self.group = group_player
 
         self.zone = pygame.sprite.Sprite()
-        self.zone.image = pygame.Surface(SIZE_ZONE_STORE)
-        self.zone.image.fill((0, 0, 0))
+        self.zone.image = Constants.SHOP_IMAGE
+        # self.zone.image.fill((0, 0, 0))
         self.zone.rect = self.zone.image.get_rect()
         self.zone.rect.x, self.zone.rect.y = pos
 
@@ -104,7 +102,8 @@ class Store:
                 self.player_in_zone = False
 
     def draw(self, screen):
-        pygame.draw.rect(screen, pygame.Color('red'), (*self.pos, *SIZE_ZONE_STORE), width=1)
+        screen.blit(self.zone.image, (self.pos[0] + SIZE_ZONE_STORE[0] // 2 - self.zone.image.get_width() // 2,
+                                      self.pos[1] + SIZE_ZONE_STORE[1] // 2 - self.zone.image.get_height() // 2))
 
         if self.player_in_zone:
             screen.blit(self.mes, (self.pos[0] + SIZE_ZONE_STORE[0] // 2, self.pos[1] + SIZE_ZONE_STORE[1] // 2))
@@ -166,6 +165,7 @@ class Upgrade:
         if self.open_window:
             pygame.draw.rect(screen, BLUE, (50, 50, SIZE_SCREEN[0] - 100, SIZE_SCREEN[1] - 100),
                              width=0)
+            screen.blit(self.font.render('В разроботке', True, (135, 0, 219)), (50, 50))
 
 
 class Fight:
