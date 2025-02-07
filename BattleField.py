@@ -69,8 +69,11 @@ class Battle:
 
     def spawn_weapon(self, weapon):
         wep, index = weapon
+        group_all_en = pygame.sprite.Group()
+        group_all_en.add(self.mobs)
+        group_all_en.add(self.boars)
         if index != 2:
-            res_weapon = wep(self.group_weapon, self.hero.rect.center, self.mobs)
+            res_weapon = wep(self.group_weapon, self.hero.rect.center, group_all_en)
         else:
             res_weapon = wep(self.group_weapon, self.hero.rect.center)
         self.all_sprites.add(res_weapon)
@@ -121,7 +124,11 @@ class Battle:
             self.hero.update()
             self.mobs.update(self.hero)
             self.boars.update(self.hero)
-            self.group_weapon.update(self.mobs)
+            group_all_en = pygame.sprite.Group()
+            group_all_en.add(self.mobs)
+            group_all_en.add(self.boars)
+            self.group_weapon.update(group_all_en)
+            #self.group_weapon.update(self.boars)
             self.check_collisions()
 
             self.spawn_timer += 1
