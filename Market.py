@@ -1,9 +1,7 @@
 import pygame
 from MarketTools import WindowStore
 import Constants
-from Constants import UI_HEIGHT, PLAYER_SPEED_MOVE, PLAYER_HP, PLAYER_ARMOR, RED, WHITE, SLOT_SIZE, INVENTORY_SLOTS, \
-    FIELD_HEIGHT, FIELD_WIDTH, FPS, GRAY, SIZE_ZONE_STORE, SIZE_SCREEN, BLUE, SIZE_BOX, DARK_BLUE, DARK_DARK_BLUE, \
-    LIGHT_BLUE, BLACK
+from Constants import PLAYER_HP, PLAYER_ARMOR, WHITE, SIZE_ZONE_STORE, SIZE_SCREEN, BLUE, DARK_BLUE
 
 
 def update_inventory(all_sp, hero):
@@ -151,7 +149,6 @@ class Upgrade:
 
             else:
                 self.player_in_zone = False
-        # TODO: дальше делать магазин :)
 
     def draw(self, screen):
         screen.blit(self.zone.image, self.pos)

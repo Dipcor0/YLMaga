@@ -1,12 +1,13 @@
 import pygame
 from pygame import mixer
 import random
-from Constants import UI_HEIGHT, PLAYER_SPEED_MOVE, PLAYER_HP, PLAYER_ARMOR, RED, WHITE, SLOT_SIZE, INVENTORY_SLOTS, \
-    FIELD_HEIGHT, FIELD_WIDTH, FPS, GRAY
+from Constants import (UI_HEIGHT, PLAYER_HP, PLAYER_ARMOR, RED, WHITE, SLOT_SIZE, INVENTORY_SLOTS, FIELD_HEIGHT,
+                       FIELD_WIDTH, FPS, GRAY)
 import Constants
 import Creatures
 
 mixer.init()
+
 
 # Интерфейс
 class Interface:
@@ -14,9 +15,8 @@ class Interface:
         self.font = pygame.font.Font(None, 36)
         self.hp = PLAYER_HP
         self.armor = PLAYER_ARMOR
-        self.exp = 0
-        self.coins = 0
-        self.crystals = 0
+        self.counter_10_kill = Constants.MONEY
+        self.counter_add_crystalls = 0
 
     def draw(self, surface):
         pygame.draw.rect(surface, GRAY, (0, FIELD_HEIGHT, FIELD_WIDTH, UI_HEIGHT))
@@ -27,8 +27,8 @@ class Interface:
 
         hp_text = self.font.render(f"{self.hp}", True, WHITE)
         armor_text = self.font.render(f"{self.armor}", True, WHITE)
-        crystal_text = self.font.render(f"{self.crystals}", True, WHITE)
-        coin_text = self.font.render(f"{self.coins}", True, WHITE)
+        crystal_text = self.font.render(f"{Constants.CRYSTALS}", True, WHITE)
+        coin_text = self.font.render(f"{Constants.MONEY}", True, WHITE)
 
         surface.blit(hp_text, (50, FIELD_HEIGHT + 10))
         surface.blit(armor_text, (50, FIELD_HEIGHT + 50))
@@ -40,13 +40,14 @@ class Interface:
             slot_x = 200 + i * (slot_size + 10)
             slot_y = FIELD_HEIGHT + 10
             pygame.draw.rect(surface, GRAY, (slot_x, slot_y, slot_size, slot_size), 2)
+        if ((Constants.MONEY - self.counter_10_kill) % 10 == 0 and Constants.MONEY - self.counter_10_kill != 0
+                and (Constants.MONEY - self.counter_10_kill) // 10 != self.counter_add_crystalls):
+            self.counter_add_crystalls += 1
+            Constants.CRYSTALS += 1
 
     def reboot(self):
         self.hp = PLAYER_HP
         self.armor = PLAYER_ARMOR
-        self.exp = 0
-        self.coins = 0
-        self.crystals = 0
 
 
 # Битва
@@ -64,8 +65,6 @@ class Battle:
 
         self.group_weapon = pygame.sprite.Group()
         self.weapons = self.hero.weapons
-
-
 
     def spawn_weapon(self, weapon):
         wep, index = weapon
@@ -128,7 +127,6 @@ class Battle:
             group_all_en.add(self.mobs)
             group_all_en.add(self.boars)
             self.group_weapon.update(group_all_en)
-            #self.group_weapon.update(self.boars)
             self.check_collisions()
 
             self.spawn_timer += 1
@@ -150,7 +148,6 @@ class Battle:
                     self.weapons[key][1] += 1
 
     def draw_all(self, screen):
-        print(Constants.PLAYER_EQUIPMENT, Constants.PLAYER_WEAPON)
         screen.blit(Constants.BACKGROUND_IMAGE, (0, 0))
         pygame.draw.rect(screen, WHITE, (0, 0, FIELD_WIDTH, FIELD_HEIGHT), 5)
         self.all_sprites.draw(screen)

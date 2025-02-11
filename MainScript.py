@@ -1,6 +1,3 @@
-import pygame
-from pygame import mixer
-
 import Constants
 from Equipment import *
 from Creatures import Player
@@ -69,6 +66,7 @@ class Controller:
             scene.draw_all(self.screen)
             pygame.display.flip()
             self.clock.tick(FPS)
+
 
 with Controller() as game:
     game.run()

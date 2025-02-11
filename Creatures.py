@@ -1,18 +1,7 @@
 import pygame
 import Constants
 import Equipment
-from Constants import UI_HEIGHT, PLAYER_SPEED_MOVE, PLAYER_HP, PLAYER_ARMOR, RED, WHITE, SLOT_SIZE, INVENTORY_SLOTS, \
-    FIELD_HEIGHT, FIELD_WIDTH, FPS, GRAY
-
-
-'''
-TODO: Сделать csv файл, в котором будут хранится данные о всех оружиях и снаряжении. 
-В снаряжении будет колонка name - имя снаряжения, use_now - в инвентаре ли снаряга (значения 0/1), 
-buff_type - тип улучшения (hp, armor, regen и тд), quantity - значение усиления (10, 20, 100, 250, 500)
-TODO: В функцию upgrade_characteristics передавать список  из csv файла с именами снаряжения, 
-сделать цикл проверки использования в инвентаре, определения типа улучшения, 
-добавления добавочного значения к истинному
-'''
+from Constants import PLAYER_SPEED_MOVE, FIELD_HEIGHT, FIELD_WIDTH
 
 
 class Player(pygame.sprite.Sprite):

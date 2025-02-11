@@ -1,19 +1,21 @@
 import pygame
 from pygame import mixer
 import math
-from Constants import FIELD_WIDTH, FIELD_HEIGHT, PLAYER_EQUIPMENT, FPS, WELM_SCREAM, FIREBALL_SPAWN_SOUND, CORONA_VIRUS, \
-    NEEDLE_SWISH_SOUND
 
-needle_image = pygame.image.load("Sprites/Creatures/needle_image.png").convert_alpha()
+import Constants
+from Constants import (FIELD_WIDTH, FIELD_HEIGHT, FPS, WELM_SCREAM, FIREBALL_SPAWN_SOUND, CORONA_VIRUS,
+                       NEEDLE_SWISH_SOUND, load_image)
+
+needle_image = load_image('Sprites/Equipments', 'needle_image.png')
 needle_image = pygame.transform.scale(needle_image, (30, 30))
 
-fireball_image = pygame.image.load("Sprites/Creatures/фаербол.png").convert_alpha()
+fireball_image = load_image('Sprites/Equipments', 'фаербол.png')
 fireball_image = pygame.transform.scale(fireball_image, (30, 30))  # Загружаем изображение
 
-breastplate_image = pygame.image.load("Sprites/Creatures/нагрудник.png").convert_alpha()
+breastplate_image = load_image('Sprites/Equipments', 'нагрудник.png')
 breastplate_image = pygame.transform.scale(breastplate_image, (22, 22))  # Пример размера
 
-boots_image = pygame.image.load("Sprites/Creatures/ботинки.png").convert_alpha()
+boots_image = load_image('Sprites/Equipments', 'ботинки.png')
 boots_image = pygame.transform.scale(boots_image, (22, 22))
 
 mixer.init()
@@ -60,6 +62,7 @@ class Needles(pygame.sprite.Sprite):
                 if enemy.hp <= 0:
                     kill_mob()
                     enemy.kill()  # Удаляем моба после смерти
+                    Constants.MONEY += 1
 
         # Удаляем иглу, если она выходит за границы экрана
         if (self.rect.right < 0 or self.rect.left > FIELD_WIDTH or
@@ -102,7 +105,7 @@ class Fireball(pygame.sprite.Sprite):
                     kill_mob()
                     enemy.kill()  # Удаляем моба после смерти
                 self.kill()  # Удаляем фаербол после первого попадания
-                return
+                Constants.MONEY += 1
 
         # Удаляем фаербол, если он выходит за границы экрана
         if (self.rect.right < 0 or self.rect.left > FIELD_WIDTH or
@@ -151,6 +154,7 @@ class SocialDistance(pygame.sprite.Sprite):
             if enemy.hp <= 0:
                 kill_mob()
                 enemy.kill()
+                Constants.MONEY += 1
 
 
 class Breastplate(pygame.sprite.Sprite):
