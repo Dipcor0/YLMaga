@@ -1,116 +1,119 @@
 import pygame
 import Constants
-from Equipment import Armor
+import Equipment
+from Constants import PLAYER_SPEED_MOVE, FIELD_HEIGHT, FIELD_WIDTH
 
 
-class Creature(pygame.sprite.Sprite):
-    def __init__(self, group, image, pos):
-        super().__init__(group)
-        self.image = image
-        self.rect = self.image.get_rect()
-        self.rect.x = pos[0]
-        self.rect.y = pos[1]
-
-    def update(self, event=None, tick=None):
-        pass
-
-    def draw(self, screen):
-        pass
-
-
-class Boss(Creature):
-    def __init__(self, group, image, pos):
-        super().__init__(group, image, pos)
-
-
-# пример противника
-class Enemy(Creature):
-    def __init__(self, group, image, pos):
-        super().__init__(group, image, pos)
-        self.money = 52
-        self.exp = 52
-        self.hp = 1000
-
-    def get_damage(self, hit: int):
-        self.hp -= hit
-        if self.hp <= 0:
-            self.kill()
-
-    def kill(self):
-        # что-то, чтобы противник изчез с поля
-        return self.money, self.exp
-
-
-class Hero(Creature):
+class Player(pygame.sprite.Sprite):
     def __init__(self):
-        super().__init__(Constants.GROUP_PLAYER, Constants.PLAYER_IMAGE, (0, 0))
-        self.speed = Constants.PLAYER_SPEED_MOVE
-        self.can_move = True
-        self.rect.x = 500  # куча данных персонажа. От сюда
-        self.rect.y = 500
-        self.level = Constants.PLAYER_LEVEL
-        self.hp = Constants.PLAYER_HP
-        self.regen = Constants.PLAYER_REGEN
-        self.hit = Constants.PLAYER_HIT
-        self.chane_crit = Constants.PLAYER_CHANCE_CRIT
-        self.koef_krit = Constants.PLAYER_KOEF_CRIT
-        self.armor = Constants.PLAYER_ARMOR
-        self.chance_avoidence = Constants.PLAYER_CHANCE_AVOIDANCE  # До сюда
+        super().__init__()
+        self.image = pygame.image.load("Sprites/Creatures/персонаж.png").convert_alpha()
+        self.image = pygame.transform.scale(self.image, (90, 50))
+        self.rect = self.image.get_rect()
+        self.rect.center = (Constants.SIZE_SCREEN[0] // 2 - self.image.get_width() // 2,
+                            Constants.SIZE_SCREEN[1] // 2 - self.image.get_height() // 2)
+        self.speed = PLAYER_SPEED_MOVE
+        self.weapons = {}
+        self.load_weapon()
         self.inventory = []
-        self.armor_sprite = None  # Добавляем атрибут для брони
+        self.load_inventory()
+        self.can_move = True
 
-    def update(self, event=None, tick=None):
+    def update(self, scene=None):
         if self.can_move:
-            keys = pygame.key.get_pressed()
-            if keys[pygame.K_w] and self.rect.top > 0:
-                self.rect.y -= self.speed
-            if keys[pygame.K_s] and self.rect.bottom < Constants.SIZE_SCREEN[1]:
-                self.rect.y += self.speed
-            if keys[pygame.K_a] and self.rect.left > 0:
-                self.rect.x -= self.speed
-            if keys[pygame.K_d] and self.rect.right < Constants.SIZE_SCREEN[0]:
-                self.rect.x += self.speed
+            if not scene:
+                keys = pygame.key.get_pressed()
+                if keys[pygame.K_w] and self.rect.top > 0:
+                    self.rect.y -= self.speed
+                if keys[pygame.K_s] and self.rect.bottom < FIELD_HEIGHT:
+                    self.rect.y += self.speed
+                if keys[pygame.K_a] and self.rect.left > 0:
+                    self.rect.x -= self.speed
+                if keys[pygame.K_d] and self.rect.right < FIELD_WIDTH:
+                    self.rect.x += self.speed
+            elif scene == 1:
+                keys = pygame.key.get_pressed()
+                if keys[pygame.K_w] and self.rect.top > 0:
+                    self.rect.y -= self.speed
+                if keys[pygame.K_s] and self.rect.bottom < Constants.SIZE_SCREEN[1]:
+                    self.rect.y += self.speed
+                if keys[pygame.K_a] and self.rect.left > 0:
+                    self.rect.x -= self.speed
+                if keys[pygame.K_d] and self.rect.right < Constants.SIZE_SCREEN[0]:
+                    self.rect.x += self.speed
 
-    def move(self, dx, dy):  # изменение координаты во время движения
-        self.rect = self.rect.move(dx, dy)
+        for item in self.inventory:
+            item.update(self)
 
-    def get_coords(self):
-        return [self.rect.x, self.rect.y]
+    def load_inventory(self):
+        self.inventory.clear()
+        for index in Constants.PLAYER_EQUIPMENT:
+            self.inventory.append(Equipment.get_equipment(index)(self))
 
-    def get_hp(self):
-        return self.hp
-
-    def get_armor(self):
-        return self.armor
-
-    def get_inventory(self):
-        return self.inventory
+    def load_weapon(self):
+        self.weapons.clear()
+        for index in Constants.PLAYER_WEAPON:
+            weapon = Equipment.get_weapon(index)
+            self.weapons[(weapon, index)] = [weapon.reload, 0]  # оружие: кд, таймер
 
     def block_move(self):
         self.can_move = not self.can_move
 
-    def block_right(self):
-        pass
 
-    def block_left(self):
-        pass
+class Mob(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = Constants.MOB_IMAGE
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        self.speed = 2
+        self.attack_cooldown = 1000  # 1 секунда
+        self.last_attack_time = pygame.time.get_ticks()
+        self.hp = 100  # Добавлено здоровье
 
-    def block_up(self):
-        pass
+    def can_attack(self):
+        now = pygame.time.get_ticks()
+        if now - self.last_attack_time >= self.attack_cooldown:
+            self.last_attack_time = now
+            return True
+        return False
 
-    def block_down(self):
-        pass
+    def update(self, target):
+        if self.rect.x < target.rect.x:
+            self.rect.x += self.speed
+        if self.rect.x > target.rect.x:
+            self.rect.x -= self.speed
+        if self.rect.y < target.rect.y:
+            self.rect.y += self.speed
+        if self.rect.y > target.rect.y:
+            self.rect.y -= self.speed
 
-    def upgrade_characteristics(self, armor):
-        if armor:
-            armor.upgrade_armor(self)
 
+class Boar(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = Constants.BOAR_IMAGE  # Добавь изображение кабана в Constants
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        self.speed = 1  # Медленнее обычного моба
+        self.attack_cooldown = 1500  # Дольше между атаками
+        self.last_attack_time = pygame.time.get_ticks()
+        self.hp = 200  # Увеличенное здоровье
+        self.damage = 20  # Более сильная атака
 
-'''
-TODO: Сделать csv файл, в котором будут хранится данные о всех оружиях и снаряжении. 
-В снаряжении будет колонка name - имя снаряжения, use_now - в инвентаре ли снаряга (значения 0/1), 
-buff_type - тип улучшения (hp, armor, regen и тд), quantity - значение усиления (10, 20, 100, 250, 500)
-TODO: В функцию upgrade_characteristics передавать список  из csv файла с именами снаряжения, 
-сделать цикл проверки использования в инвентаре, определения типа улучшения, 
-добавления добавочного значения к истинному
-'''
+    def can_attack(self):
+        now = pygame.time.get_ticks()
+        if now - self.last_attack_time >= self.attack_cooldown:
+            self.last_attack_time = now
+            return True
+        return False
+
+    def update(self, target):
+        if self.rect.x < target.rect.x:
+            self.rect.x += self.speed
+        if self.rect.x > target.rect.x:
+            self.rect.x -= self.speed
+        if self.rect.y < target.rect.y:
+            self.rect.y += self.speed
+        if self.rect.y > target.rect.y:
+            self.rect.y -= self.speed

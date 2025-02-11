@@ -1,94 +1,13 @@
 import pygame
+from pygame import mixer
 import random
-from Equipment import Needles, Breastplate, Boots, Fireball
-from Constants import UI_HEIGHT, PLAYER_SPEED_MOVE, PLAYER_HP, PLAYER_ARMOR, RED, WHITE, SLOT_SIZE, INVENTORY_SLOTS, FIELD_HEIGHT, FIELD_WIDTH, FPS, GRAY
+from Constants import (UI_HEIGHT, PLAYER_HP, PLAYER_ARMOR, RED, WHITE, SLOT_SIZE, INVENTORY_SLOTS, FIELD_HEIGHT,
+                       FIELD_WIDTH, FPS, GRAY)
+import Constants
+import Creatures
 
-# Инициализация Pygame
-pygame.init()
+mixer.init()
 
-# Окно игры
-screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-pygame.display.set_caption("BattleGame")
-clock = pygame.time.Clock()
- 
-
-# Загрузка изображений
-background_image = pygame.image.load("Sprites/Creatures/полеБоя.png").convert_alpha()
-background_image = pygame.transform.scale(background_image, (FIELD_WIDTH, FIELD_HEIGHT))
-
-heart_image = pygame.image.load("Sprites/Creatures/сердце.png").convert_alpha()
-heart_image = pygame.transform.scale(heart_image, (30, 30))
-
-armor_image = pygame.image.load("Sprites/Creatures/броня.png").convert_alpha()
-armor_image = pygame.transform.scale(armor_image, (30, 30))
-
-crystal_image = pygame.image.load("Sprites/Creatures/кристалик.png").convert_alpha()
-crystal_image = pygame.transform.scale(crystal_image, (30, 30))
-
-coin_image = pygame.image.load("Sprites/Creatures/монетка.png").convert_alpha()
-coin_image = pygame.transform.scale(coin_image, (30, 30))
-
-mob_image = pygame.image.load("Sprites/Creatures/моб.png").convert_alpha()
-mob_image = pygame.transform.scale(mob_image, (60, 60))  # Увеличен размер мобов
-
-
-
-# Игрок
-class Player(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
-        self.image = pygame.image.load("Sprites/Creatures/персонаж.png").convert_alpha()
-        self.image = pygame.transform.scale(self.image, (90, 50))
-        self.rect = self.image.get_rect()
-        self.rect.center = (FIELD_WIDTH // 2, FIELD_HEIGHT // 2)
-        self.speed = PLAYER_SPEED_MOVE
-
-    def update(self):
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_w] and self.rect.top > 0:
-            self.rect.y -= self.speed
-        if keys[pygame.K_s] and self.rect.bottom < FIELD_HEIGHT:
-            self.rect.y += self.speed
-        if keys[pygame.K_a] and self.rect.left > 0:
-            self.rect.x -= self.speed
-        if keys[pygame.K_d] and self.rect.right < FIELD_WIDTH:
-            self.rect.x += self.speed
-
-    def upgrade_characteristics(self, armor, boots):
-        if armor:
-            armor.upgrade_armor(self)
-        if boots:
-            boots.upgrade_armor(self)
-
-
-# Моб
-class Mob(pygame.sprite.Sprite):
-    def __init__(self, x, y):
-        super().__init__()
-        self.image = mob_image
-        self.rect = self.image.get_rect()
-        self.rect.center = (x, y)
-        self.speed = 2
-        self.attack_cooldown = 1000  # 1 секунда
-        self.last_attack_time = pygame.time.get_ticks()
-        self.hp = 100  # Добавлено здоровье
-
-    def can_attack(self):
-        now = pygame.time.get_ticks()
-        if now - self.last_attack_time >= self.attack_cooldown:
-            self.last_attack_time = now
-            return True
-        return False
-
-    def update(self, target):
-        if self.rect.x < target.rect.x:
-            self.rect.x += self.speed
-        if self.rect.x > target.rect.x:
-            self.rect.x -= self.speed
-        if self.rect.y < target.rect.y:
-            self.rect.y += self.speed
-        if self.rect.y > target.rect.y:
-            self.rect.y -= self.speed
 
 # Интерфейс
 class Interface:
@@ -96,21 +15,20 @@ class Interface:
         self.font = pygame.font.Font(None, 36)
         self.hp = PLAYER_HP
         self.armor = PLAYER_ARMOR
-        self.exp = 0
-        self.coins = 0
-        self.crystals = 0
+        self.counter_10_kill = Constants.MONEY
+        self.counter_add_crystalls = 0
 
     def draw(self, surface):
         pygame.draw.rect(surface, GRAY, (0, FIELD_HEIGHT, FIELD_WIDTH, UI_HEIGHT))
-        surface.blit(heart_image, (10, FIELD_HEIGHT + 10))
-        surface.blit(armor_image, (10, FIELD_HEIGHT + 50))
-        surface.blit(crystal_image, (10, FIELD_HEIGHT + 90))
-        surface.blit(coin_image, (10, FIELD_HEIGHT + 130))
+        surface.blit(Constants.HEART_IMAGE, (10, FIELD_HEIGHT + 10))
+        surface.blit(Constants.ARMOR_IMAGE, (10, FIELD_HEIGHT + 50))
+        surface.blit(Constants.CRYSTAL_IMAGE, (10, FIELD_HEIGHT + 90))
+        surface.blit(Constants.COIN_IMAGE, (10, FIELD_HEIGHT + 130))
 
         hp_text = self.font.render(f"{self.hp}", True, WHITE)
         armor_text = self.font.render(f"{self.armor}", True, WHITE)
-        crystal_text = self.font.render(f"{self.crystals}", True, WHITE)
-        coin_text = self.font.render(f"{self.coins}", True, WHITE)
+        crystal_text = self.font.render(f"{Constants.CRYSTALS}", True, WHITE)
+        coin_text = self.font.render(f"{Constants.MONEY}", True, WHITE)
 
         surface.blit(hp_text, (50, FIELD_HEIGHT + 10))
         surface.blit(armor_text, (50, FIELD_HEIGHT + 50))
@@ -122,42 +40,58 @@ class Interface:
             slot_x = 200 + i * (slot_size + 10)
             slot_y = FIELD_HEIGHT + 10
             pygame.draw.rect(surface, GRAY, (slot_x, slot_y, slot_size, slot_size), 2)
+        if ((Constants.MONEY - self.counter_10_kill) % 10 == 0 and Constants.MONEY - self.counter_10_kill != 0
+                and (Constants.MONEY - self.counter_10_kill) // 10 != self.counter_add_crystalls):
+            self.counter_add_crystalls += 1
+            Constants.CRYSTALS += 1
+
+    def reboot(self):
+        self.hp = PLAYER_HP
+        self.armor = PLAYER_ARMOR
 
 
 # Битва
-
-
 class Battle:
-    def __init__(self):
-        self.hero = Player()
+    def __init__(self, hero):
+        self.hero = hero
         self.mobs = pygame.sprite.Group()
-        self.needles = pygame.sprite.Group()
-        self.fireballs = pygame.sprite.Group()
+        self.boars = pygame.sprite.Group()
         self.all_sprites = pygame.sprite.Group(self.hero)
         self.ui = Interface()
         self.spawn_timer = 0
+        self.boar_spawn_timer = 0
         self.game_over = False
+        self.kill_count = 0
 
-        self.breastplate = Breastplate(self.hero)
-        self.all_sprites.add(self.breastplate)
-        self.breastplate.upgrade_armor(self.ui)
+        self.group_weapon = pygame.sprite.Group()
+        self.weapons = self.hero.weapons
 
-        self.boots = Boots(self.hero)
-        self.all_sprites.add(self.boots)
-        self.boots.upgrade_armor(self.ui)
+    def spawn_weapon(self, weapon):
+        wep, index = weapon
+        group_all_en = pygame.sprite.Group()
+        group_all_en.add(self.mobs)
+        group_all_en.add(self.boars)
+        if index != 2:
+            res_weapon = wep(self.group_weapon, self.hero.rect.center, group_all_en)
+        else:
+            res_weapon = wep(self.group_weapon, self.hero.rect.center)
+        self.all_sprites.add(res_weapon)
 
     def spawn_mob(self):
         if not self.game_over:
             x = random.randint(0, FIELD_WIDTH)
             y = random.randint(0, FIELD_HEIGHT)
-            mob = Mob(x, y)
+            mob = Creatures.Mob(x, y)
             self.mobs.add(mob)
             self.all_sprites.add(mob)
 
-    def spawn_fireball(self):
+    def spawn_boar(self):
         if not self.game_over:
-            fireball = Fireball(self.fireballs, self.hero.rect.center, self.mobs)
-            self.all_sprites.add(fireball)
+            x = random.randint(0, FIELD_WIDTH)
+            y = random.randint(0, FIELD_HEIGHT)
+            boar = Creatures.Boar(x, y)
+            self.boars.add(boar)
+            self.all_sprites.add(boar)
 
     def check_collisions(self):
         for mob in self.mobs.copy():
@@ -169,48 +103,74 @@ class Battle:
                 if self.ui.hp <= 0:
                     self.game_over = True
 
+            for boar in self.boars.copy():
+                if self.hero.rect.colliderect(boar.rect) and boar.can_attack():
+                    if self.ui.armor > 0:
+                        self.ui.armor -= boar.damage  # Урон от кабана
+                    else:
+                        self.ui.hp -= boar.damage
+                    if self.ui.hp <= 0:
+                        self.game_over = True
+
+                if boar.hp <= 0:
+                    boar.kill()
+
             if mob.hp <= 0:
-                mob.kill()  # Удаляем моба, если его здоровье <= 0
+                mob.kill()
 
     def update_all(self):
         if not self.game_over:
             self.hero.update()
-            self.breastplate.update(self.hero)
-            self.boots.update(self.hero)
             self.mobs.update(self.hero)
-            self.needles.update(self.mobs)
-            self.fireballs.update(self.mobs)
+            self.boars.update(self.hero)
+            group_all_en = pygame.sprite.Group()
+            group_all_en.add(self.mobs)
+            group_all_en.add(self.boars)
+            self.group_weapon.update(group_all_en)
             self.check_collisions()
 
             self.spawn_timer += 1
+            self.boar_spawn_timer += 1
+
             if self.spawn_timer > FPS * 2:
                 self.spawn_mob()
-                self.spawn_fireball()
                 self.spawn_timer = 0
 
+            if self.boar_spawn_timer > FPS * 7:
+                self.spawn_boar()
+                self.boar_spawn_timer = 0
+
+            for key in self.weapons.keys():
+                if self.weapons[key][0] == self.weapons[key][1]:
+                    self.spawn_weapon(key)
+                    self.weapons[key][1] = 0
+                else:
+                    self.weapons[key][1] += 1
+
     def draw_all(self, screen):
-        screen.blit(background_image, (0, 0))
+        screen.blit(Constants.BACKGROUND_IMAGE, (0, 0))
         pygame.draw.rect(screen, WHITE, (0, 0, FIELD_WIDTH, FIELD_HEIGHT), 5)
         self.all_sprites.draw(screen)
         self.ui.draw(screen)
 
         if self.game_over:
-            game_over_text = self.ui.font.render("GAME OVER", True, RED)
+            game_over_text = self.ui.font.render("GAME OVER. PRESS ESC", True, RED)
             screen.blit(game_over_text, (FIELD_WIDTH // 2 - 100, FIELD_HEIGHT // 2 - 50))
 
+    def reboot(self):
+        self.all_sprites.empty()
+        self.all_sprites.add(self.hero)
+        self.mobs.empty()
+        self.boars.empty()
+        self.group_weapon.empty()
+        self.weapons = self.hero.weapons
+        self.ui.reboot()
+        self.spawn_timer = 0
+        self.boar_spawn_timer = 0
+        self.hero.load_weapon()
+        self.hero.load_inventory()
+        self.game_over = False
 
-# Основной цикл
-battle = Battle()
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-            running = False
-
-    battle.update_all()
-    battle.draw_all(screen)
-
-    pygame.display.flip()
-    clock.tick(FPS)
-
-pygame.quit()
+        for item in self.hero.inventory:
+            self.all_sprites.add(item)
+            item.upgrade_armor(self.ui)
