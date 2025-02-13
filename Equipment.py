@@ -104,8 +104,9 @@ class Fireball(pygame.sprite.Sprite):
                 if enemy.hp <= 0:
                     kill_mob()
                     enemy.kill()  # Удаляем моба после смерти
+                    Constants.MONEY += 1
                 self.kill()  # Удаляем фаербол после первого попадания
-                Constants.MONEY += 1
+
 
         # Удаляем фаербол, если он выходит за границы экрана
         if (self.rect.right < 0 or self.rect.left > FIELD_WIDTH or
